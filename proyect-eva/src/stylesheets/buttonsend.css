@@ -1,0 +1,19 @@
+.container-buttonsend {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(13, 27, 139);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 15px;
+  font-weight: 700;
+  color: rgb(226, 226, 226);
+}
+.container-buttonsend:hover {
+  background-color: rgba(253, 153, 12, 0.77);
+}
+.container-buttonsend:active {
+  background-color: rgb(255, 190, 78);
+}

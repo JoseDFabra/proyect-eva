@@ -1,0 +1,14 @@
+.container-buttonlink {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.container-buttonlink:hover {
+  background-color: #f5f6f7;
+}
+.container-buttonlink:active {
+  background-color: #b5b5b5;
+}
