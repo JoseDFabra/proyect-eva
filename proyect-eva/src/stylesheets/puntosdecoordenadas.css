@@ -1,3 +1,4 @@
+
 .container{
   display: flex;
   flex-direction: column;
@@ -8,6 +9,9 @@
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
+}
+.titulo-puntos-de-coordenadas{
+  margin:  20px;
 }
 .container-form{
   display: flex;
@@ -23,4 +27,19 @@
   height: 50px;
   align-items: center;
   justify-content: center;
+  font-size: 1rem;
+}
+.input-coordenada{
+  margin: 0 10px;
+  font-size: 1.2rem;
+  width: 3.3rem;
+  border-radius: 8PX;
+  border:none;
+  box-shadow: 1px 1px 3px #00000028;;
+  background-color: #f5f6f7a8;
+  padding: 4px;
+}
+.botton-form{
+  display: flex;
+  flex-wrap: wrap;
 }
