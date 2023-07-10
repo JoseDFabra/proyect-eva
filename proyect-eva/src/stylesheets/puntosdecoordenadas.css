@@ -1,16 +1,18 @@
 
-.container{
+.container-card{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
-  min-height: 250px;
-  width: 80%;
+  margin: 15px;
+  height: 450px;
+  width: 350px;
+  min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
 }
-.titulo-puntos-de-coordenadas{
+.titulo-card{
   margin:  20px;
 }
 .container-form{
@@ -19,9 +21,10 @@
   background-color: rgb(255, 255, 255);
   min-width: 80%;
   font-size: 1.2rem;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
 }
+
 .container-input{
   display: flex;
   height: 50px;
@@ -39,7 +42,49 @@
   background-color: #f5f6f7a8;
   padding: 4px;
 }
+input#name.input-coordenada{
+  width: 7.5rem;
+}
+
+
 .botton-form{
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-card.fijado{
+  position: sticky ;
+  top: 15px;
+}
+
+
+/* aqui estamos dandole estilo a los puntos */
+
+.container-li{
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: start;
+}
+.lista-li{
+  text-align: center;
+  background-color: rgba(0, 155, 169, 0.515);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 15px 15px 15px;
+  box-shadow: 1px 1px 3px #00000028;
+  border-radius: 15px;
+  padding: 8px;
+  max-width: 400px;
+  width: 400px;
+
+}
+.conteiner-card.lista-guardada{
+  max-width: 450px;
+  max-height: 450px;
 }
