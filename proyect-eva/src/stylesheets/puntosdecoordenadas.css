@@ -80,11 +80,20 @@ input#name.input-coordenada{
   box-shadow: 1px 1px 3px #00000028;
   border-radius: 15px;
   padding: 8px;
-  max-width: 400px;
+  max-width: 90%;
   width: 400px;
 
 }
-.conteiner-card.lista-guardada{
-  max-width: 450px;
-  max-height: 450px;
+.lista-guardada{
+  width: 450px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  margin: 15px;
+  min-width: 340px;
+  box-shadow: 3px 3px 13px #00000028;
+  border-radius: 20px;
+  background-color: white;
 }

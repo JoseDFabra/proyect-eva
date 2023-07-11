@@ -12,7 +12,7 @@ html, body{
   min-width:875px ;
   display: flex;
   flex-wrap: wrap;
-  min-height: 100vh;
+  min-height: 100%;
 }
 header{
   width: 100%;

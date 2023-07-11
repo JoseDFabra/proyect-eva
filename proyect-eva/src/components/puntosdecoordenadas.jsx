@@ -2,6 +2,7 @@ import React,{ useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
+import { AiOutlinePlaySquare, AiOutlineCloseSquare } from "react-icons/ai";
 
 
 function Pcoordenadas(props){
@@ -43,6 +44,7 @@ function Pcoordenadas(props){
           title="Maximo 10 caracteres"
           autoComplete="off"
           maxLength={10}
+          required
           className="input-coordenada" 
           value={formulario.name} 
           onChange={handleChange}/>
@@ -111,24 +113,27 @@ function Pcoordenadas(props){
           />
         </div>
         <div className="botton-form">
-          <Button>Guardar</Button>
+          <Button>Guardar punto</Button>
         </div>
       </form>
     </div>
-    <div className="container-card lista-guardada">
+    <div className="lista-guardada">
       <h2 className="titulo-card" >Aqui va el titulo</h2>
       
       <ul className="container-li" >
         {puntos.map(p =>
         <li className="lista-li" key={p.name} >
           <p>{`name: ${p.name}`}</p>
+          <AiOutlinePlaySquare/> 
           {`[${p.motor1_angel}],
             [${p.motor2_angel}],
             [${p.motor3_angel}],
             [${p.motor4_angel}],
-            [${p.motor5_angel}]`} 
+            [${p.motor5_angel}]`}
+            <AiOutlineCloseSquare/> 
           </li>)}
       </ul>
+      <Button>Guardar secuencia</Button>
     </div>  
       
     </>
