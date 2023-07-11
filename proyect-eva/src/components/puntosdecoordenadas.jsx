@@ -1,5 +1,6 @@
 import React,{ useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
+import { saveCoordenadas,updateCoordenadas,deleteCoordenadas } from "../services/coordenadasServices";
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
 import {AiOutlineDelete, AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
@@ -30,10 +31,16 @@ function Pcoordenadas(prop){
 
 
   /* Esta accion borrala solo el punto seleccionado */
-  const deleteThis = (n) =>{
-    console.log(`Eliminado ${n}`);
+  const deleteThis = (index) =>{
+    console.log("Eliminado", index);
+    const puntosRestantes = [...puntos]; // Crea una copia de la matriz puntos
+    puntosRestantes.splice(index, 1); // Elimina el elemento en el índice especificado
+    setPuntos(puntosRestantes); // Actualiza el estado con la nueva matriz sin el elemento eliminado
   }
-
+  
+  /* console.log(`Eliminado `, index);
+  const puntosRestantes = puntos.splice(index,1);
+  setPuntos([...puntosRestantes]); */
 
 
   function saveAll(){
@@ -42,8 +49,14 @@ function Pcoordenadas(prop){
 
 
   /* Esta accion dara play a solo un punto */
-  const playThis = (name) =>{
-    console.log("Se esta ejecutando este punto :D")
+  const playThis = (p) =>{
+    const enviarPunto={
+      comands:"play",
+      type:"point",
+      name:p.name
+    }
+    console.log("ejecutar:  ",enviarPunto);
+    saveCoordenadas(p)
   }
   
   /* esta accion borrala la listaq que llevamos guardando en su totalidad */
@@ -148,11 +161,11 @@ function Pcoordenadas(prop){
       
       {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
       <ul className="container-li" >
-        {puntos.map(p =>
-        <li className="lista-li" key={p.name} id={p.name} >
+        {puntos.map((p,index) =>
+        <li className="lista-li" key={p.name} >
           <p>{`name: ${p.name}`}</p>
           <div className="pld" >
-            <AiOutlinePlayCircle className="play-punto" onClick={playThis} /> 
+            <AiOutlinePlayCircle className="play-punto" onClick={()=>{playThis(p)}} /> 
             {
              `[${p.motor1_angel}],
               [${p.motor2_angel}],
@@ -160,7 +173,7 @@ function Pcoordenadas(prop){
               [${p.motor4_angel}],
               [${p.motor5_angel}]`
             }
-            <AiOutlineCloseCircle className="delete-punto" onClick={deleteThis} /> 
+            <AiOutlineCloseCircle className="delete-punto" onClick={()=>{deleteThis(index)}} /> 
           </div>
         </li>)}
       </ul>

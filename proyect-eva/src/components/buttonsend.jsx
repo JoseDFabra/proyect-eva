@@ -1,9 +1,9 @@
 import React from "react";
 import "../stylesheets/buttonsend.css"
-function Buttonsend(props){
+function Buttonsend({ textbutton }){
   return(
     <div className="container-buttonsend">
-      {props.textbutton}
+      {textbutton}
     </div>
   );
 }

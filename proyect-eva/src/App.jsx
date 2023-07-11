@@ -12,7 +12,7 @@ function App() {
           <ul className='navbar' >
             <div className="left-nabvar">
               <div className="container-logoHDI" >
-                <a href="https://grupohdi.com/es/nosotros/" target="_blank" >
+                <a href="https://grupohdi.com/es/nosotros/" target="_blank" rel="noreferrer" >
                   <img src={require(`./images/logohdicol.png`)} className='imagen-hdi' alt="logo hdi" rel="icon"  />
                 </a>
               </div>
