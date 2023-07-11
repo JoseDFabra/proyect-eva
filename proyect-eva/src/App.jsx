@@ -12,7 +12,9 @@ function App() {
           <ul className='navbar' >
             <div className="left-nabvar">
               <div className="container-logoHDI" >
-                <a target="_blank" href="https://grupohdi.com/es/nosotros/"><img  src={require(`./images/logohdicol.png`)} className='imagen-hdi' alt="logo hdi" /></a>
+                <a href="https://grupohdi.com/es/nosotros/" target="_blank" >
+                  <img src={require(`./images/logohdicol.png`)} className='imagen-hdi' alt="logo hdi" rel="icon"  />
+                </a>
               </div>
               <div className="container-title-eva" >
                 <p className="title-eva" > <span className="span-eva" >Eva HDI</span>  - <b>Robot</b> </p>

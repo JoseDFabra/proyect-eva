@@ -5,9 +5,9 @@ const useFormulario = (inicial)=>{
   const handleChange = (e)=>{
     setFormulario({
       ...formulario,
-      [e.target.name]: e.target.value
-    })
+      [e.target.name]: parseInt(e.target.value)})
   }
+
   const reset= ()=>{
     setFormulario({
       name:'',

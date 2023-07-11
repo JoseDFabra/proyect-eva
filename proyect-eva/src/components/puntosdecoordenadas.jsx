@@ -2,11 +2,13 @@ import React,{ useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
-import { AiOutlinePlaySquare, AiOutlineCloseSquare } from "react-icons/ai";
+import {AiOutlineDelete, AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
+import Buttonsend from './buttonsend';
 
 
-function Pcoordenadas(props){
+function Pcoordenadas(prop){
   const [puntos, setPuntos] = useState([]);
+
   const [formulario, handleChange, reset] = useFormulario({
     name:'',
     motor1_angel:'',
@@ -15,23 +17,47 @@ function Pcoordenadas(props){
     motor4_angel:'',
     motor5_angel:'',
   })
+  
+  const submit = e =>{
+    e.preventDefault();
+    setPuntos([
+      ...puntos,
+      formulario,
+    ])
+    reset();
+  }
 
-    const submit = e =>{
-      e.preventDefault();
-      setPuntos([
-        ...puntos,
-        formulario,
-      ])
-      reset();
-    }
 
+
+  /* Esta accion borrala solo el punto seleccionado */
+  const deleteThis = (n) =>{
+    console.log(`Eliminado ${n}`);
+  }
+
+
+
+  function saveAll(){
+    console.log("Se guardara todo")
+  }
+
+
+  /* Esta accion dara play a solo un punto */
+  const playThis = (name) =>{
+    console.log("Se esta ejecutando este punto :D")
+  }
+  
+  /* esta accion borrala la listaq que llevamos guardando en su totalidad */
+  const deleteAll = () =>{
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar todo?');
+    if (confirmDelete) {setPuntos([]);}
+  }
     
-    console.log(puntos);
+  console.log(puntos);
     
     return(
     <>
     <div className="container-card fijado">
-      <h2 className="titulo-card" >Aqui va el titulo</h2>
+      <h2 className="titulo-card" >Puntos Coordenados</h2>
       <form className="container-form" onSubmit={submit} >
 
         <div className="container-input">
@@ -118,22 +144,30 @@ function Pcoordenadas(props){
       </form>
     </div>
     <div className="lista-guardada">
-      <h2 className="titulo-card" >Aqui va el titulo</h2>
+      <h2 className="titulo-card" >Lista De Puntos</h2>
       
+      {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
       <ul className="container-li" >
         {puntos.map(p =>
-        <li className="lista-li" key={p.name} >
+        <li className="lista-li" key={p.name} id={p.name} >
           <p>{`name: ${p.name}`}</p>
-          <AiOutlinePlaySquare/> 
-          {`[${p.motor1_angel}],
-            [${p.motor2_angel}],
-            [${p.motor3_angel}],
-            [${p.motor4_angel}],
-            [${p.motor5_angel}]`}
-            <AiOutlineCloseSquare/> 
-          </li>)}
+          <div className="pld" >
+            <AiOutlinePlayCircle className="play-punto" onClick={playThis} /> 
+            {
+             `[${p.motor1_angel}],
+              [${p.motor2_angel}],
+              [${p.motor3_angel}],
+              [${p.motor4_angel}],
+              [${p.motor5_angel}]`
+            }
+            <AiOutlineCloseCircle className="delete-punto" onClick={deleteThis} /> 
+          </div>
+        </li>)}
       </ul>
-      <Button>Guardar secuencia</Button>
+      <div className="footer-card">
+        <Buttonsend textbutton='Guardar Lista' onClick={saveAll} />
+        <AiOutlineDelete onClick={deleteAll} title="Borrar toda la secuencia" className="delete-all-lista" />
+      </div>
     </div>  
       
     </>
