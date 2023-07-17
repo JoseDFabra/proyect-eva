@@ -5,14 +5,16 @@
 }
 html, body{
   font-size: 18px;
-  background-color: rgba(0, 155, 169, 0.4);
+  background-color: rgb(31, 31, 31);
   /* background-color: #f5f6f7; */
 }
 .App{
-  min-width:875px ;
   display: flex;
   flex-wrap: wrap;
+  height: auto;
   min-height: 100vh;
+  width: auto;
+  min-width:875px ;
 }
 header{
   width: 100%;
@@ -25,7 +27,7 @@ header{
   flex-wrap: wrap;
   list-style: none;
   justify-content: space-between;
-  margin: 15px;
+  margin:  15px 15px 0 15px;
   height: 60px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
@@ -50,6 +52,7 @@ header{
   justify-content: space-around;
 }
 .right-nabvar{
+  transition: 0.3s ease;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

@@ -4,16 +4,17 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin: 15px;
-  height: 450px;
-  width: 350px;
+  margin: 5px;
+  height: auto;
+  min-height: 450px;
+  width: auto;
   min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
 }
 .titulo-card{
-  margin:  20px;
+  margin:  10px;
   color: rgb(0, 0, 0);
   text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.6);
 }
@@ -22,21 +23,20 @@
   flex-direction: column;
   background-color: rgb(255, 255, 255);
   min-width: 80%;
-  font-size: 1.2rem;
-  align-items: flex-start;
-  justify-content: space-between;
+  font-size: 1rem;
+  align-items: center;
 }
 
 .container-input{
   display: flex;
-  height: 50px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
 }
 .input-coordenada{
   margin: 0 10px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   width: 3.3rem;
   border-radius: 8PX;
   border:none;
@@ -44,10 +44,22 @@
   background-color: #f5f6f7a8;
   padding: 4px;
 }
-input#name.input-coordenada{
+input.escribirname.input-coordenada{
   width: 7.5rem;
 }
-
+.nombrar-lista{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 0 10px 25px;
+}
+.nombrar{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 
 .botton-form{
   display: flex;
@@ -55,12 +67,6 @@ input#name.input-coordenada{
   width: 100%;
   justify-content: center;
   align-items: center;
-}
-
-/* aqui hacemos position stick para que el vid donde se guardan los puntos siempre este precente en pantalla */
-.container-card.fijado{
-  position: sticky ;
-  top: 15px;
 }
 
 
@@ -71,43 +77,106 @@ input#name.input-coordenada{
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-bottom: 3px;
   align-items: center;
   justify-content: flex-start;
 }
 .lista-li{
-  text-align: center;
-  background-color: rgba(160, 160, 160, 0.515);
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin: 0 15px 15px 15px;
-  box-shadow: 1px 1px 3px #00000028;
-  border-radius: 15px;
-  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   max-width: 90%;
   width: 400px;
-  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 400;
+  border-radius: 15px;
+  margin-top: 10px;
+  box-shadow: 0 1px 1px #0000006b;
+  background-color: rgb(199, 199, 199);
 
 }
+.separacion-borrarpunto{
+  display: flex;
+}
+
+.footer-card-select{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top: solid 2px rgb(0, 0, 0);
+  border-image: linear-gradient(to bottom right, #ffffff, rgb(120, 120, 120) /* rgb(250, 154, 23) */, #fdfdfd, #ffffff, #ffffff) 1;
+  padding-top: 6px;
+}
+.opcion-seleccionada{
+  padding: 3px;
+}
+
+.select{
+  padding: 5px;
+}
+
 /* pld es el vid que contiene los botones de p: play.  l: lista y el boton d: delete */
+
+.separacion-play{
+  display: flex;
+  padding: 2px;
+}
+.separacion-delete{
+  display: flex;
+  padding: 2px;
+}
+
+.separacion-name{
+  display: flex;
+  width: 45%;  
+  justify-content: center;
+}
+.separacion-coordenada{
+  display: flex;
+  font-size: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+}
 .pld{
   display: flex;
   height: 100%;
   width: 100%;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-items: center;
 }
 .lista-guardada{
+  overflow-y: auto; /* Añade un scroll vertical cuando sea necesario */
+  overflow-x: hidden; 
+  height: 450px;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 5px;
+  box-shadow: 3px 3px 13px #00000028;
+  border-radius: 20px;
+  background-color: white;
+}
+.movimientos-guardados{
   width: 450px;
   min-height: 450px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin: 15px;
+  margin: 5px;
   min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
 }
+
 
 .footer-card{
   display: flex;
@@ -120,10 +189,11 @@ input#name.input-coordenada{
 /* Aqui estamos dandole estilos a el boton de play y de delete de los puntos guardados */
 .delete-punto{
   background-color: rgb(253, 65, 65);
-  position: relative;
-  bottom: 10px;
+  transition: 0.3s ease;
   border-radius: 50%;
   cursor: pointer;
+  width: 1.1rem;
+  height: 1.1rem;
 }
 .delete-punto:hover{
   background-color: red;
@@ -135,9 +205,10 @@ input#name.input-coordenada{
 }
 
 .play-punto{
+  width: 1.1rem;
+  height: 1.1rem;
   background-color: rgba(28, 240, 28, 0.7);
-  position: relative;
-  bottom: 10px;
+  transition: 0.3s ease;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -153,7 +224,8 @@ input#name.input-coordenada{
 /* Estilo de la papelera */
 .delete-all-lista{
   position: relative;
-  left: 50%;
+  bottom: -2px;
+  left: 10%;
   font-size: 1.4rem;
   cursor: pointer;
 }

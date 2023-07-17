@@ -12,11 +12,11 @@ const useFormulario = (inicial)=>{
   const reset= ()=>{
     setFormulario({
       name:'',
-      motor1_angel:'',
-      motor2_angel:'',
-      motor3_angel:'',
-      motor4_angel:'',
-      motor5_angel:'',
+      motor1_angle:'',
+      motor2_angle:'',
+      motor3_angle:'',
+      motor4_angle:'',
+      motor5_angle:'',
     })
   }
   return [formulario, handleChange, reset]
