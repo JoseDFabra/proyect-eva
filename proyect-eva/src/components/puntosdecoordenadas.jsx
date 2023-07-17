@@ -164,8 +164,7 @@ function Pcoordenadas(prop){
           />
         </div>
         <div className="botton-form">
-          <Button text="Guardar punto"/>
-         
+          <Button text="Guardar punto"/>    
         </div>
       </form>
       <div className="footer-card-select">
@@ -236,7 +235,7 @@ function Pcoordenadas(prop){
       <h2 className="titulo-card" >Lista De Puntos</h2>
       
       {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
-      
+      <div className="container-scroll">
       <ul className="container-li" >
         <div className="nombrar" >
           <label>Nombrar lista:</label><input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" name="" id="" onChange={(e)=>{setNameList(e.target.value)}}/>
@@ -266,10 +265,9 @@ function Pcoordenadas(prop){
           </div>
         </li>)}
       </ul>
-      <div className="footer-card">
-        <Button text="Guardar lista" onClick={()=>{saveAll(puntos)}} />
-
-        
+        <div className="footer-card">
+          <Button text="Guardar lista" onClick={()=>{saveAll(puntos)}} />
+        </div>
       </div>
       <div className="footer-card-select">
         <select
