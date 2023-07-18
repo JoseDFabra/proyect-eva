@@ -1,13 +1,13 @@
 
 .container-card{
   display: flex;
+  height: 100%;
+  width: 33%;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   align-items: center;
   margin: 5px;
-  height: auto;
   min-height: 450px;
-  width: auto;
   min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
@@ -161,7 +161,7 @@ input.escribirname.input-coordenada{
   min-width: 400px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   align-items: center;
   margin: 5px;
   box-shadow: 3px 3px 13px #00000028;
@@ -169,14 +169,13 @@ input.escribirname.input-coordenada{
   background-color: white;
 }
 .movimientos-guardados{
-  width: 450px;
-  min-height: 450px;
+  height: 450px;
+  min-width: 400px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   align-items: center;
   margin: 5px;
-  min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
@@ -246,4 +245,11 @@ input.escribirname.input-coordenada{
   background-color: rgb(253, 65, 65);
   box-shadow: 0 0 5px 2px red;
   border-radius: 5px;
+}
+
+.casual{
+  background-color: red;
+  color:white;
+  display:flex;
+  flex-direction: column
 }

@@ -11,9 +11,9 @@ html, body{
 .App{
   display: flex;
   flex-wrap: wrap;
+  width: auto;
   height: auto;
   min-height: 100vh;
-  width: auto;
   min-width:875px ;
 }
 header{
@@ -74,5 +74,4 @@ header{
 .container-title-eva{
   margin-left: 25px;
 }
-
 
