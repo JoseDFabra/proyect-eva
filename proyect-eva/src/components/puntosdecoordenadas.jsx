@@ -8,19 +8,17 @@ import { ListaPuntos } from "../models/ListaPuntos";
 
 
 function Pcoordenadas(prop){
-
-
-
-
-  const [variableCualquiera, setVariableCualquiera] = useState([1,2,3,4,5,6,7,8,9,10]);
-  //
-
-  const [currentList, setCurrentList] = useState(undefined); //
   
-  const [listsOptions, setListOptions] = useState([]); // 
+  //Movimientos
+  const [currentMovements, setCurrentMovemets] = useState(undefined); //
   const [movementsList, setMovementsList] = useState([]); //
 
-  //
+  
+  //Listas
+  const [currentList, setCurrentList] = useState(undefined); //
+  const [listsOptions, setListOptions] = useState([]); // 
+
+  //puntos
   const [currentPunto, setcurrentPunto] = useState(undefined);// 
   const [nameList, setNameList] = useState("");//
   const [pointsOptions,setpointsOptions] = useState([]); //lista de puntos
@@ -465,7 +463,6 @@ function Pcoordenadas(prop){
 
 
 
-
     <div className="movimientos-guardados">
       <h2 className="titulo-card" >Lista De Movimientos</h2>
       <div className="container-scroll">
@@ -551,8 +548,6 @@ function Pcoordenadas(prop){
             } />
           </div>
       </div>
-
-
     </div>
 
 

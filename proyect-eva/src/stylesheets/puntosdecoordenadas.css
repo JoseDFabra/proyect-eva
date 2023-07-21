@@ -1,14 +1,14 @@
 
 .container-card{
   display: flex;
-  height: 100%;
-  width: 33%;
+  min-width: 340px;
+  width: 400px;
+  min-height: 450px;
+  height: 400px;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
   margin: 5px;
-  min-height: 450px;
-  min-width: 340px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
