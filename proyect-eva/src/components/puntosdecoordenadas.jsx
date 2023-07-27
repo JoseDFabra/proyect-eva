@@ -2,9 +2,9 @@ import React,{ useEffect, useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
-import {AiOutlineDelete, AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
+import {AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
 import { ListaPuntos } from "../models/ListaPuntos";
-import { getAllPoints, createPoint, deletePoint } from "../api/cobor.api";
+import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements } from "../api/cobor.api";
 import { toast } from "react-hot-toast";
 
 
@@ -33,15 +33,18 @@ function Pcoordenadas(prop){
     motor4_angle:'',
     motor5_angle:'',
   })
- //----------------------------------------------v2-----------------------------
+ //---------------------------------------------- v2 points -----------------------------
   useEffect(()=>{
-    async function loadPoints(){
-      const res = await getAllPoints()
-      //console.log(res);
-      setpointsOptions(res.data);
+    async function loadPointsAndMovements(){
+      const pointsres = await getAllPoints()
+      setpointsOptions(pointsres.data);
+
+      const movementsres = await getAllMovements()
+      setListOptions(movementsres.data);
     }
-    loadPoints();
-  })
+      //console.log(res);
+    loadPointsAndMovements();
+  },[])
   
   const submit = async e =>{
     e.preventDefault();
@@ -57,7 +60,24 @@ function Pcoordenadas(prop){
     });
     reset();
   }
-  //----------------------------------------------v2-----------------------------
+  //---------------------------------------------- v2 points -----------------------------
+  
+  //---------------------------------------------- v2 Movements -----------------------------
+  /* useEffect(()=>{
+    async function loadMovements(){
+      const res = await getAllMovements()
+      console.log(res);
+      // setListOptions(res.data);
+
+    }
+    loadMovements();
+  }) */
+  
+  
+  
+  
+  //---------------------------------------------- v2 Movements -----------------------------
+  
   
   /* Esta accion borrala solo el punto seleccionado */
   const deleteThis = (index) =>{
@@ -68,23 +88,35 @@ function Pcoordenadas(prop){
   }
   
   /* Guardar todo */
-
+  
   function saveAll(puntos){
     /* const list = new ListaPuntos(nameList,false,puntos);
     console.log("list", list); */
   }
-
+  
   function savePoints(){
     if(nameList !== ""){
       const list = new ListaPuntos(nameList,false,puntos)
+      async function crearmovimiento(){
+        await createMovements(list);
+      } 
+      crearmovimiento();
+      
       setListOptions(listsOptions => [...listsOptions, list]);
+      toast.success("Movimiento Creado",{
+        position:"bottom-right",
+        style: {
+          background: "#f8f8f8",
+          color: "#000"
+        }
+      });
       setNameList("");
     }
     else{
-      alert("Please put a name to a list"); 
+      alert("Porfavor ingresa un nombre para el Movimiento"); 
     }
   }
-
+  
   function savePointsList(){
     if(currentList !== ""){
       setMovementsList(m => [...m,currentList]);
@@ -106,12 +138,6 @@ function Pcoordenadas(prop){
     /* saveCoordenadas(p) */
   }
   
-  /* esta accion borrala la listaq que llevamos guardando en su totalidad */
-  const deleteAll = () =>{
-    const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar toda la lista?');
-    if (confirmDelete) {setPuntos([]);}
-  }
-  
     return(
     <>
   
@@ -131,7 +157,7 @@ function Pcoordenadas(prop){
 
 
     <div className="container-card fijado">
-      <h2 className="titulo-card" >Puntos Coordenados</h2>
+      <h2 className="titulo-card" >Coordinate Points</h2>
 
       <form className="container-form" onSubmit={submit} >
 
@@ -219,7 +245,7 @@ function Pcoordenadas(prop){
           />
         </div>
         <div className="botton-form">
-          <Button text="Guardar punto"/>    
+          <Button text="Save Point"/>    
         </div>
       </form>
 
@@ -254,13 +280,13 @@ function Pcoordenadas(prop){
             </option>)}
           </select>
           <div className="opcion-seleccionada">
-            opcion seleccionada:  
+            selected option:  
             <b>
               {currentPunto ? currentPunto.name : ''}
             </b> 
           </div>
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          <Button text="Agregar a la lista" onClick={
+          <Button text="Add To The List" onClick={
             ()=>{
               if(currentPunto){
                 setPuntos([...puntos,currentPunto])
@@ -268,7 +294,7 @@ function Pcoordenadas(prop){
             }
           } />
           <div className="separacion-borrarpunto">
-            <Button text="Borrar punto" onClick={ async () => {
+            <Button text="Delete Point" onClick={ async () => {
                 if(currentPunto){
                   const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este punto?');
                   if (confirmDelete) {
@@ -282,7 +308,7 @@ function Pcoordenadas(prop){
                     });
                     const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);
                     setpointsOptions(nuevospointsOptions);
-                    console.log(nuevospointsOptions);
+                    //console.log(nuevospointsOptions);
                     setcurrentPunto(null);
                   }
                 }
@@ -341,14 +367,13 @@ function Pcoordenadas(prop){
 
 
     <div className="lista-guardada">
-      <h2 className="titulo-card" >Lista De Puntos</h2>
+      <h2 className="titulo-card" >Movement</h2>
       {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
       <div className="container-scroll">
         <ul className="container-li" >
           <div className="nombrar" >
-            <label>Nombrar lista:</label>
+            <label>Name movement:</label>
             <input value={nameList} type="text" autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" onChange={(e)=>{setNameList(e.target.value)}}/>
-            <AiOutlineDelete onClick={deleteAll} title="Borrar toda la secuencia" className="delete-all-lista" />
           </div>
           {puntos.map((p,index) =>
           <li className="lista-li" key={index} >
@@ -376,7 +401,7 @@ function Pcoordenadas(prop){
         </ul>
         <div className="footer-card">
 
-          <Button text="Guardar lista" onClick={savePoints} />
+          <Button text="Save Movement" onClick={savePoints} />
         </div>
       </div>
       <div className="footer-card-select">
@@ -399,13 +424,13 @@ function Pcoordenadas(prop){
 
           </select>
           <div className="opcion-seleccionada">
-            opcion seleccionada:  
+            selected option:  
             <b>
               {currentList ? currentList.name : ''}
             </b> 
           </div>
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          <Button text="Agregar a la lista" onClick={
+          <Button text="Add To The List" onClick={
             ()=>{
               if(currentList){
                 savePointsList()
@@ -413,11 +438,22 @@ function Pcoordenadas(prop){
             }
           } />
           <div className="separacion-borrarpunto">
-            <Button text="Borrar lista" onClick={
-              () =>{
+            <Button text="Delete Movement" onClick={async () =>{
                 if(currentList){
+                  const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este movimiento?');
+                  if (confirmDelete) {
+                    await deleteMovements(currentList.name);
+                    toast.success("Movement was deleted",{
+                      position:"bottom-right",
+                      style: {
+                        background: "#f8f8f8",
+                        color: "#000"
+                      }
+                    });
+                  }
                   const newlistsOptions = listsOptions.filter(p => p.name !==  currentList.name);
                   setListOptions(newlistsOptions);
+                  setCurrentList(null);
                 }
               } 
             } />
@@ -462,11 +498,11 @@ function Pcoordenadas(prop){
 
 
     <div className="movimientos-guardados">
-      <h2 className="titulo-card" >Lista De Movimientos</h2>
+      <h2 className="titulo-card" >Sequence</h2>
       <div className="container-scroll">
       <ul className="container-li" >
         <div className="nombrar" >
-          <label>Nombrar lista:</label>
+          <label>Nombrar 3:</label>
           <input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" name="" id="" onChange={(e)=>{setNameList(e.target.value)}}/>
         </div>
         {movementsList.map((p,index) =>
@@ -485,7 +521,7 @@ function Pcoordenadas(prop){
         </li>)}
       </ul>
         <div className="footer-card">
-          <Button text="Guardar lista" onClick={()=>{saveAll(puntos)}} />
+          <Button text="Save Sequence" onClick={()=>{saveAll(puntos)}} />
         </div>
       </div>
       <div className="footer-card-select">
@@ -515,13 +551,13 @@ function Pcoordenadas(prop){
             </option>)}
           </select>
           <div className="opcion-seleccionada">
-            opcion seleccionada:  
+            selected option:  
             <b>
               {currentPunto ? currentPunto.name : ''}
             </b> 
           </div>
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          <Button text="Agregar a la lista" onClick={
+          <Button text="Add To The List" onClick={
             ()=>{
               if(currentPunto){
                 setPuntos([...puntos,currentPunto])
@@ -529,7 +565,7 @@ function Pcoordenadas(prop){
             }
           } />
           <div className="separacion-borrarpunto">
-            <Button text="Borrar punto" onClick={
+            <Button text="Delete Sequence" onClick={
               () =>{
                 if(currentPunto){
                   const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);

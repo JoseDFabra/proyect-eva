@@ -17,8 +17,15 @@
 }
 .button:hover {
   background-color: rgb(11, 23, 113);
-  box-shadow: 0 0 3px 1px rgb(13, 28, 139);
+  box-shadow: 0 0 3px 1px rgb(11, 23, 113);
 }
 .button:active {
   background-color: rgb(13, 28, 139);
+}
+.red{
+  background-color: red;
+}
+.red:hover{
+  background-color: red;
+  box-shadow: 0 0 3px 1px red;
 }
