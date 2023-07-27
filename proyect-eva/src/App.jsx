@@ -1,5 +1,6 @@
 import Buttonlink from "./components/buttonlink"
 import Pcoordenadas from "./components/puntosdecoordenadas"
+import { Toaster } from "react-hot-toast"
 
 import './App.css';
 
@@ -33,6 +34,7 @@ function App() {
       <footer className="footer">
        
       </footer>
+      <Toaster />
     </div>
   );
 }

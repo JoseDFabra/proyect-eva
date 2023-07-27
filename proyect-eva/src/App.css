@@ -16,7 +16,7 @@ html, body{
   height: 100%;
   width: 100vw;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   
 }
 header{
@@ -33,7 +33,7 @@ header{
   margin:  15px 15px 0 15px;
   height: 60px;
   box-shadow: 3px 3px 13px #00000028;
-  border-radius: 20px;
+  border-radius: 15px;
   
 }
 .imagen-hdi{

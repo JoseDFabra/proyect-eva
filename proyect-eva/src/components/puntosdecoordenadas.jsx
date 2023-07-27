@@ -1,16 +1,17 @@
-import React,{ useState } from "react";
+import React,{ useEffect, useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
-/* import { saveCoordenadas,updateCoordenadas,deleteCoordenadas } from "../services/coordenadasServices"; */
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
 import {AiOutlineDelete, AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
 import { ListaPuntos } from "../models/ListaPuntos";
+import { getAllPoints, createPoint, deletePoint } from "../api/cobor.api";
+import { toast } from "react-hot-toast";
 
 
 function Pcoordenadas(prop){
   
   //Movimientos
-  const [currentMovements, setCurrentMovemets] = useState(undefined); //
+  //const [currentMovements, setCurrentMovemets] = useState(undefined); //
   const [movementsList, setMovementsList] = useState([]); //
 
   
@@ -32,15 +33,31 @@ function Pcoordenadas(prop){
     motor4_angle:'',
     motor5_angle:'',
   })
+ //----------------------------------------------v2-----------------------------
+  useEffect(()=>{
+    async function loadPoints(){
+      const res = await getAllPoints()
+      //console.log(res);
+      setpointsOptions(res.data);
+    }
+    loadPoints();
+  })
   
-  const submit = e =>{
+  const submit = async e =>{
     e.preventDefault();
-    setpointsOptions([
-      ...pointsOptions,
-      formulario,
-    ])
+    //setpointsOptions([...pointsOptions,formulario,])
+    await createPoint(formulario)
+    
+    toast.success("Punto Creado",{
+      position:"bottom-right",
+      style: {
+        background: "#f8f8f8",
+        color: "#000"
+      }
+    });
     reset();
   }
+  //----------------------------------------------v2-----------------------------
   
   /* Esta accion borrala solo el punto seleccionado */
   const deleteThis = (index) =>{
@@ -58,7 +75,7 @@ function Pcoordenadas(prop){
   }
 
   function savePoints(){
-    if(nameList != ""){
+    if(nameList !== ""){
       const list = new ListaPuntos(nameList,false,puntos)
       setListOptions(listsOptions => [...listsOptions, list]);
       setNameList("");
@@ -69,7 +86,7 @@ function Pcoordenadas(prop){
   }
 
   function savePointsList(){
-    if(currentList != ""){
+    if(currentList !== ""){
       setMovementsList(m => [...m,currentList]);
 
     }
@@ -113,21 +130,6 @@ function Pcoordenadas(prop){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div className="container-card fijado">
       <h2 className="titulo-card" >Puntos Coordenados</h2>
 
@@ -156,6 +158,7 @@ function Pcoordenadas(prop){
           name="motor1_angle" 
           id="motor1_angle" 
           min={-125} max={125} 
+          required
           className="input-coordenada" 
           value={formulario.motor1_angle} 
           onChange={handleChange}/>
@@ -168,6 +171,7 @@ function Pcoordenadas(prop){
             name="motor2_angle" 
             id="motor2_angle" 
             min={-125} max={125} 
+            required
             className="input-coordenada"
             value={formulario.motor2_angle} 
             onChange={handleChange}
@@ -181,6 +185,7 @@ function Pcoordenadas(prop){
             name="motor3_angle" 
             id="motor3_angle"
             min={-125} max={125} 
+            required
             className="input-coordenada"
             value={formulario.motor3_angle} 
             onChange={handleChange}
@@ -194,6 +199,7 @@ function Pcoordenadas(prop){
             name="motor4_angle" 
             id="motor4_angle"
             min={-125} max={125} 
+            required
             className="input-coordenada"
             value={formulario.motor4_angle} 
             onChange={handleChange}
@@ -206,6 +212,7 @@ function Pcoordenadas(prop){
           name="motor5_angle" 
           id="motor5_angle" 
           min={-125} max={125} 
+          required
           className="input-coordenada"
           value={formulario.motor5_angle} 
           onChange={handleChange}
@@ -215,16 +222,6 @@ function Pcoordenadas(prop){
           <Button text="Guardar punto"/>    
         </div>
       </form>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -271,19 +268,25 @@ function Pcoordenadas(prop){
             }
           } />
           <div className="separacion-borrarpunto">
-            <Button text="Borrar punto" onClick={
-              () =>{
+            <Button text="Borrar punto" onClick={ async () => {
                 if(currentPunto){
-                  const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);
-                  setpointsOptions(nuevospointsOptions);
+                  const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este punto?');
+                  if (confirmDelete) {
+                    await deletePoint(currentPunto.name);
+                    toast.success("Punto borrado",{
+                      position:"bottom-right",
+                      style: {
+                        background: "#f8f8f8",
+                        color: "#000"
+                      }
+                    });
+                    const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);
+                    setpointsOptions(nuevospointsOptions);
+                    console.log(nuevospointsOptions);
+                    setcurrentPunto(null);
+                  }
                 }
               } 
-            } />
-            <Button text="Borrar todo" onClick={
-              ()=>{
-                const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar todas las opciones de puntos?');
-                if (confirmDelete) {setpointsOptions([]);}
-              }
             } />
           </div>
       </div>
@@ -372,6 +375,7 @@ function Pcoordenadas(prop){
           </li>)}
         </ul>
         <div className="footer-card">
+
           <Button text="Guardar lista" onClick={savePoints} />
         </div>
       </div>
@@ -416,12 +420,6 @@ function Pcoordenadas(prop){
                   setListOptions(newlistsOptions);
                 }
               } 
-            } />
-            <Button text="Borrar todo" onClick={
-              ()=>{
-                const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar todas las opciones de puntos?');
-                if (confirmDelete) {setpointsOptions([]);}
-              }
             } />
           </div>
       </div>
@@ -470,7 +468,6 @@ function Pcoordenadas(prop){
         <div className="nombrar" >
           <label>Nombrar lista:</label>
           <input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" name="" id="" onChange={(e)=>{setNameList(e.target.value)}}/>
-          <AiOutlineDelete onClick={deleteAll} title="Borrar toda la secuencia" className="delete-all-lista" />
         </div>
         {movementsList.map((p,index) =>
         <li className="lista-li" key={index} >
@@ -539,12 +536,6 @@ function Pcoordenadas(prop){
                   setpointsOptions(nuevospointsOptions);
                 }
               }      
-            } />
-            <Button text="Borrar todo" onClick={
-              ()=>{
-                const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar todas las opciones de puntos?');
-                if (confirmDelete) {setpointsOptions([]);}
-              }
             } />
           </div>
       </div>
