@@ -2,29 +2,16 @@ import React,{ useEffect, useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
-import {AiOutlineCloseCircle, AiOutlinePlayCircle } from "react-icons/ai";
+import {AiOutlineCloseCircle,AiOutlineDelete, AiOutlinePlayCircle, AiOutlineUndo } from "react-icons/ai";
 import { ListaPuntos } from "../models/ListaPuntos";
-import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements } from "../api/cobor.api";
-import { toast } from "react-hot-toast";
+import { Sequence } from "../models/Sequence";
+import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements, getAllSequences, createsequence, deletesequence } from "../api/cobot.api";
+import { notifier } from "../services/notifier";
 
 
 function Pcoordenadas(prop){
-  
-  //Movimientos
-  //const [currentMovements, setCurrentMovemets] = useState(undefined); //
-  const [movementsList, setMovementsList] = useState([]); //
 
-  
-  //Listas
-  const [currentList, setCurrentList] = useState(undefined); //
-  const [listsOptions, setListOptions] = useState([]); // 
-
-  //puntos
-  const [currentPunto, setcurrentPunto] = useState(undefined);// 
-  const [nameList, setNameList] = useState("");//
-  const [pointsOptions,setpointsOptions] = useState([]); //lista de puntos
-
-  const [puntos, setPuntos] = useState([]);
+  //form control
   const [formulario, handleChange, reset] = useFormulario({
     name:'',
     motor1_angle:'',
@@ -33,6 +20,38 @@ function Pcoordenadas(prop){
     motor4_angle:'',
     motor5_angle:'',
   })
+
+
+  
+  //puntos
+    //puntos de select
+  const [pointsOptions,setpointsOptions] = useState([]); //lista de puntos
+    //punto seleccionado del select
+  const [currentPunto, setcurrentPunto] = useState(undefined);// 
+  
+  
+  //movimientos
+    //lista de puntos
+  const [puntos, setPuntos] = useState([]);
+    //puntos del select
+  const [listsOptions, setListOptions] = useState([]); // 
+    //punto seleccionado del select
+  const [currentList, setCurrentList] = useState(undefined); //
+    // nombre de la lista de movimientos
+  const [nameList, setNameList] = useState("");//
+  
+  
+  //sequencias
+    //lista de movimientos
+  const [movementsList, setMovementsList] = useState([]); //
+    //nombre al momento de guardar la secuencia
+  const [sequenceName, setSequenceName] = useState([]);
+    //lista de secuencias actuales - select
+  const [sequenceList, setSequenceList] = useState([]);
+    //secuencia actual seleccionada.
+  const [currentSequences, setCurrentSequences] = useState(undefined); //
+
+
  //---------------------------------------------- v2 points -----------------------------
   useEffect(()=>{
     async function loadPointsAndMovements(){
@@ -41,6 +60,9 @@ function Pcoordenadas(prop){
 
       const movementsres = await getAllMovements()
       setListOptions(movementsres.data);
+
+      const sequencesres = await getAllSequences();
+      setSequenceList(sequencesres)
     }
       //console.log(res);
     loadPointsAndMovements();
@@ -51,13 +73,14 @@ function Pcoordenadas(prop){
     //setpointsOptions([...pointsOptions,formulario,])
     await createPoint(formulario)
     
-    toast.success("Punto Creado",{
-      position:"bottom-right",
-      style: {
-        background: "#f8f8f8",
-        color: "#000"
-      }
-    });
+    // toast.success("Punto Creado",{
+    //   position:"bottom-right",
+    //   style: {
+    //     background: "#f8f8f8",
+    //     color: "#000"
+    //   }
+    // });
+    notifier("Punto Creado", "success");
     reset();
   }
   //---------------------------------------------- v2 points -----------------------------
@@ -78,7 +101,6 @@ function Pcoordenadas(prop){
   
   //---------------------------------------------- v2 Movements -----------------------------
   
-  
   /* Esta accion borrala solo el punto seleccionado */
   const deleteThis = (index) =>{
     console.log("Eliminado", index);
@@ -94,24 +116,40 @@ function Pcoordenadas(prop){
     console.log("list", list); */
   }
   
-  function savePoints(){
-    if(nameList !== ""){
-      const list = new ListaPuntos(nameList,false,puntos)
-      async function crearmovimiento(){
-        await createMovements(list);
-      } 
-      crearmovimiento();
-      
-      setListOptions(listsOptions => [...listsOptions, list]);
-      toast.success("Movimiento Creado",{
-        position:"bottom-right",
-        style: {
-          background: "#f8f8f8",
-          color: "#000"
+  async function savePoints(){
+    if(nameList !== ""){ 
+      if(nameList === "grpon" || nameList === "grpoff"){
+        const list = new ListaPuntos(nameList,true,puntos)
+        const response = await createMovements(list);
+        if(response.data){
+          setListOptions(listsOptions => [...listsOptions, list]);
+          notifier("Movimiento Creado Creado", "success");
+          setNameList("");
+          setPuntos([]);
         }
-      });
-      setNameList("");
+        else{   
+          notifier("Error al crear movimiento", "error");
+        }
+      }
+      else{
+        const list = new ListaPuntos(nameList,false,puntos)
+        const response = await createMovements(list);
+        if(response.data){
+          setListOptions(listsOptions => [...listsOptions, list]);
+          notifier("Movimiento Creado Creado", "success");
+          setNameList("");
+          setPuntos([]);
+        }
+        else{   
+          notifier("Error al crear movimiento", "error");
+        }
+        
+      }
+    
+
+
     }
+
     else{
       alert("Porfavor ingresa un nombre para el Movimiento"); 
     }
@@ -124,9 +162,21 @@ function Pcoordenadas(prop){
     }
   }
 
+  async function saveSequence(){
+    if(sequenceName != ''){
+      const sequence = new Sequence(sequenceName,movementsList);
+      console.log(sequence)
+      const response = await createsequence(sequence);
+      if(response.data){
+        console.log(response);
+        setSequenceList([...sequenceList,response.data])
+      }
+    }
+    else{
+      window.alert("Porfavor coloque un nombre");
+    }
+  }
 
-  
- 
   /* Esta accion dara play a solo un punto */
   const playThis = (p) =>{
     const enviarPunto={
@@ -141,8 +191,6 @@ function Pcoordenadas(prop){
     return(
     <>
   
-
-
 
 
 
@@ -191,7 +239,7 @@ function Pcoordenadas(prop){
         </div>
 
         <div className="container-input">
-          <label htmlFor="coordenada2">motor 2 angle: </label>
+          <label htmlFor="motor2_angle">motor 2 angle: </label>
           <input 
            type="number" 
             name="motor2_angle" 
@@ -270,14 +318,16 @@ function Pcoordenadas(prop){
           }
         }} >
           <option value={""}>Seleccionar punto</option>
-          {pointsOptions.map((p,i) =>
+          {
+          pointsOptions.map((p,i) =>
             <option className="lista-li" key={i} value={JSON.stringify(p)} >
               {`${p.name}: [${p.motor1_angle}],
                   [${p.motor2_angle}],
                   [${p.motor3_angle}],
                   [${p.motor4_angle}],
                   [${p.motor5_angle}]`}
-            </option>)}
+            </option>)
+            }
           </select>
           <div className="opcion-seleccionada">
             selected option:  
@@ -299,13 +349,7 @@ function Pcoordenadas(prop){
                   const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este punto?');
                   if (confirmDelete) {
                     await deletePoint(currentPunto.name);
-                    toast.success("Punto borrado",{
-                      position:"bottom-right",
-                      style: {
-                        background: "#f8f8f8",
-                        color: "#000"
-                      }
-                    });
+                    notifier("Punto Borrado", "success");
                     const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);
                     setpointsOptions(nuevospointsOptions);
                     //console.log(nuevospointsOptions);
@@ -371,10 +415,21 @@ function Pcoordenadas(prop){
       {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
       <div className="container-scroll">
         <ul className="container-li" >
-          <div className="nombrar" >
-            <label>Name movement:</label>
-            <input value={nameList} type="text" autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" onChange={(e)=>{setNameList(e.target.value)}}/>
-          </div>
+            <div className="topmain">
+              <div className="nombrar" >
+                <label>Name movement:</label>
+                <input value={nameList} type="text" autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" onChange={(e)=>{setNameList(e.target.value)}}/>
+            </div>
+              <div className="contenedor-refesh">
+                <AiOutlineDelete  onClick={()=>{
+                  const desicion = window.alert("desea vaciar la lista?")
+                  if(!desicion){
+                    setPuntos([]);
+                  }
+                  else{ }
+                }} />
+              </div>
+            </div>
           {puntos.map((p,index) =>
           <li className="lista-li" key={index} >
             <div className="separacion-play">
@@ -443,13 +498,7 @@ function Pcoordenadas(prop){
                   const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este movimiento?');
                   if (confirmDelete) {
                     await deleteMovements(currentList.name);
-                    toast.success("Movement was deleted",{
-                      position:"bottom-right",
-                      style: {
-                        background: "#f8f8f8",
-                        color: "#000"
-                      }
-                    });
+                    notifier("Movement was deleted", "success");
                   }
                   const newlistsOptions = listsOptions.filter(p => p.name !==  currentList.name);
                   setListOptions(newlistsOptions);
@@ -503,7 +552,7 @@ function Pcoordenadas(prop){
       <ul className="container-li" >
         <div className="nombrar" >
           <label>Nombrar 3:</label>
-          <input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" name="" id="" onChange={(e)=>{setNameList(e.target.value)}}/>
+          <input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" onChange={(e)=>{setSequenceName(e.target.value)}}/>
         </div>
         {movementsList.map((p,index) =>
         <li className="lista-li" key={index} >
@@ -521,7 +570,9 @@ function Pcoordenadas(prop){
         </li>)}
       </ul>
         <div className="footer-card">
-          <Button text="Save Sequence" onClick={()=>{saveAll(puntos)}} />
+          <Button text="Save Sequence" onClick={()=>{
+            saveSequence()
+          }} />
         </div>
       </div>
       <div className="footer-card-select">
@@ -530,25 +581,63 @@ function Pcoordenadas(prop){
         defaultValue={""}
         name="puntos" 
         onChange={(e) => {
-          const value = e.target.value;
+           const value = e.target.value;
           if (value === "") {
-            setcurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
+            setcurrentPunto(null); 
             console.log(pointsOptions);
 
           } else {
             const p = JSON.parse(value);
             setcurrentPunto(p);
-          }
-        }} >
+          } 
+        }
+        } >
           <option value={""}>Seleccionar punto</option>
-          {pointsOptions.map((p,i) =>
-            <option className="lista-li" key={i} value={JSON.stringify(p)} >
-                {`${p.name}: [${p.motor1_angle}],
-                  [${p.motor2_angle}],
-                  [${p.motor3_angle}],
-                  [${p.motor4_angle}],
-                  [${p.motor5_angle}]`}
-            </option>)}
+          
+          
+          {/* {
+          Array.isArray(sequenceList)
+          ? sequenceList.map((item, index) => (
+          <option key={index} value={item}>
+            hello
+          </option>
+          ))
+          : <option>No hay elementos</option>
+
+        } */}
+
+
+
+        {Array.isArray(sequenceList) ? (
+          sequenceList.map((item, index) => (
+            <option key={index} value={item}>
+              hello
+            </option>
+          ))
+        ) : (
+          <option>No hay elementos</option>
+        )}
+
+
+
+
+
+
+
+
+
+{/* 
+        {sequenceList && Array.isArray(sequenceList) ? (
+        sequenceList.map((item, index) => (
+        <option key={index} value={JSON.stringify(item)}>
+          hello
+        </option>
+       ))
+        ) : (
+      <option value="">No hay elementos disponibles</option>
+      )} */}
+
+
           </select>
           <div className="opcion-seleccionada">
             selected option:  

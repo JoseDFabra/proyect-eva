@@ -23,7 +23,7 @@
   background-color: rgb(13, 28, 139);
 }
 .red{
-  background-color: red;
+  background-color: rgba(255, 0, 0, 0.742);
 }
 .red:hover{
   background-color: red;

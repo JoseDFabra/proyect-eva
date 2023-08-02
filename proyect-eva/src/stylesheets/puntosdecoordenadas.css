@@ -4,7 +4,7 @@
   min-width: 340px;
   width: 400px;
   min-height: 450px;
-  height: 400px;
+  height: 450px;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
@@ -21,6 +21,7 @@
 }
 .container-form{
   display: flex;
+  gap: 0.13rem;
   flex-direction: column;
   background-color: rgb(255, 255, 255);
   min-width: 80%;
@@ -50,8 +51,8 @@ input.escribirname.input-coordenada{
 }
 .nombrar-lista{
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   padding: 0 0 10px 25px;
 }
@@ -59,8 +60,24 @@ input.escribirname.input-coordenada{
   height: 100%;
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
+.topmain{
+  display: flex;
+}
+.contenedor-refesh{
+  /* background-color: red; */
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.contenedor-refesh:hover{
+  background-color: #fd7e7e;
+  border-radius: 5px;
+  box-shadow: 0 0 5px red;
+  cursor: pointer;
+}
+
 
 .botton-form{
   display: flex;
