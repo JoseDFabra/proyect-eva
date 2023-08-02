@@ -2,10 +2,10 @@ import React,{ useEffect, useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css"
 import Button from "./button";
 import useFormulario from "../hooks/useformulario";
-import {AiOutlineCloseCircle,AiOutlineDelete, AiOutlinePlayCircle, AiOutlineUndo } from "react-icons/ai";
+import {AiOutlineCloseCircle,AiOutlineDelete, AiOutlinePlayCircle} from "react-icons/ai";
 import { ListaPuntos } from "../models/ListaPuntos";
 import { Sequence } from "../models/Sequence";
-import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements, getAllSequences, createsequence, deletesequence,playpoint } from "../api/cobot.api";
+import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements, getAllSequences, createsequence, deletesequence, /* playpoint */ } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
 
 
@@ -49,24 +49,10 @@ function Pcoordenadas(prop){
   //secuencia actual seleccionada.
   const [currentSequences, setCurrentSequences] = useState(undefined); //
   //nombre al momento de guardar la secuencia
-const [sequenceName, setSequenceName] = useState([]);
+  const [sequenceName, setSequenceName] = useState([]);
 
 
  //---------------------------------------------- v2 points -----------------------------
-  /* useEffect(()=>{
-    async function loadPointsAndMovements(){
-      const pointsres = await getAllPoints()
-      setpointsOptions(pointsres.data);
-
-      const movementsres = await getAllMovements()
-      setListOptions(movementsres.data);
-
-      const sequencesres = await getAllSequences();
-      setSequenceList(sequencesres.data)
-    }
-      //console.log(res);
-    loadPointsAndMovements();
-  },[]) */
   useEffect(() => {
     async function loadPointsAndMovements() {
       try {
@@ -124,17 +110,6 @@ const [sequenceName, setSequenceName] = useState([]);
     const movimientosRestantes = [...movementsList];
     movimientosRestantes.splice(index, 1);
     setMovementsList(movimientosRestantes); 
-  }
-
-
-
-
-  
-  /* Guardar todo */
-  
-  function saveAll(puntos){
-    /* const list = new ListaPuntos(nameList,false,puntos);
-    console.log("list", list); */
   }
   
   async function savePoints() {
@@ -348,25 +323,12 @@ const [sequenceName, setSequenceName] = useState([]);
               if(currentPunto){
                 setPuntosList([...puntosList,currentPunto])
               }
+              else{
+                toast.error("Select a point",{position:'bottom-right'})
+              }
             }
           } />
           <div className="separacion-borrarpunto">
-            {/* <Button 
-            text="Delete Point" 
-            onClick={ async () => {
-                if(currentPunto){
-                  const confirmDelete = window.confirm('¿Estás seguro de que deseas borrar este punto?');
-                  if (confirmDelete) {
-                    await deletePoint(currentPunto.name);
-                    toast.success("Punto Borrado")
-                    const nuevospointsOptions = pointsOptions.filter(punto => punto.name !== currentPunto.name);
-                    setpointsOptions(nuevospointsOptions);
-                    //console.log(nuevospointsOptions);
-                    setcurrentPunto(null);
-                  }
-                }
-              } 
-            } /> */}
             <Button
               text="Delete Point"
               onClick={async () => {
@@ -388,6 +350,9 @@ const [sequenceName, setSequenceName] = useState([]);
                       });
                     }
                   }
+                }
+                else{
+                  toast.error("Select a point",{position:'bottom-right'})
                 }
               }}
             />
@@ -522,7 +487,7 @@ const [sequenceName, setSequenceName] = useState([]);
         onChange={(e) => {
           setCurrentMovement(JSON.parse(e.target.value));
         }} >
-          <option value={""}>Seleccionar op</option>
+          <option value={""}>Reparar luego</option>
           {
             movementOptions.map((p,i) =>
               <option className="lista-li" key={i} value={JSON.stringify(p)} >
@@ -711,9 +676,83 @@ const [sequenceName, setSequenceName] = useState([]);
       </div>
     </div>
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div className="sequencias-guardadas">
 
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     </>
