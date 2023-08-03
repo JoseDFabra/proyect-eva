@@ -21,7 +21,7 @@ html, body{
   
 }
 header{
-  width: 100%;
+  width: 90%;
   height: 80px;
 }
 .navbar{
@@ -70,7 +70,7 @@ header{
   display: flex;
   max-height: auto;
   width: 100%;
-  height: 85vh;
+  min-height: 85vh;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -79,4 +79,9 @@ header{
 .container-title-eva{
   margin-left: 25px;
 }
-
+.footer{
+  width: 80vw;
+}
+.footer-left{
+  background-color: #fff;
+}

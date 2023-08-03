@@ -1,17 +1,19 @@
 
 .container-card{
   display: flex;
-  min-width: 340px;
-  width: 400px;
-  min-height: 450px;
-  height: 450px;
+  min-width: 400px;
+  height: 470px;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  justify-content: flex-start;
   margin: 5px;
   box-shadow: 3px 3px 13px #00000028;
   border-radius: 20px;
   background-color: white;
+}
+.card-full{
+  width: 85vw;
 }
 .titulo-card{
   width: 100%;
@@ -177,31 +179,6 @@ input.escribirname.input-coordenada{
   justify-content: space-evenly;
   align-items: center;
 }
-.lista-guardada{
-  height: 450px;
-  min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 5px;
-  box-shadow: 3px 3px 13px #00000028;
-  border-radius: 20px;
-  background-color: white;
-}
-.movimientos-guardados{
-  height: 450px;
-  min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 5px;
-  box-shadow: 3px 3px 13px #00000028;
-  border-radius: 20px;
-  background-color: white;
-}
-
 
 .footer-card{
   display: flex;

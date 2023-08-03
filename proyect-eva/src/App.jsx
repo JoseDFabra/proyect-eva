@@ -31,8 +31,11 @@ function App() {
       <main className="main">
         <Pcoordenadas />  
       </main>
+
       <footer className="footer">
-       
+       <div className="footer-left">
+        <p> <span>designed by:</span>Grupo HDI</p>
+       </div>
       </footer>
       <Toaster />
     </div>

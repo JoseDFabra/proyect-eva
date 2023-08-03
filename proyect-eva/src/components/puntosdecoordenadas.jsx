@@ -5,7 +5,7 @@ import useFormulario from "../hooks/useformulario";
 import {AiOutlineCloseCircle,AiOutlineDelete, AiOutlinePlayCircle} from "react-icons/ai";
 import { ListaPuntos } from "../models/ListaPuntos";
 import { Sequence } from "../models/Sequence";
-import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements, getAllSequences, createsequence, deletesequence, /* playpoint */ } from "../api/cobot.api";
+import { getAllPoints, createPoint, deletePoint, getAllMovements, createMovements, deleteMovements, getAllSequences, createsequence, deletesequence, playpoint } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
 
 
@@ -137,7 +137,10 @@ function Pcoordenadas(prop){
 
     }
   }
-
+  
+  
+  
+  
   async function saveSequence() {
     if (sequenceName !== '') {
       try {
@@ -158,17 +161,8 @@ function Pcoordenadas(prop){
     }
   }
   
-
-  /* Esta accion dara play a solo un punto */
-  const playThis = (p) =>{
-    const enviarPunto={
-      comands:"play",
-      type:"point",
-      name:p.name
-    }
-    console.log("ejecutando punto:  ",enviarPunto);
-    /* saveCoordenadas(p) */
-  }
+  
+  
   
     return(
     <>
@@ -186,7 +180,7 @@ function Pcoordenadas(prop){
 
 
 
-    <div className="container-card fijado">
+    <div className="container-card">
       <h2 className="titulo-card" >Coordinate Points</h2>
 
       <form className="container-form" onSubmit={submit} >
@@ -409,8 +403,8 @@ function Pcoordenadas(prop){
 
 
 
-    <div className="lista-guardada">
-      <h2 className="titulo-card" >Movement</h2>
+    <div className="container-card">
+      <h2 className="titulo-card" >Movements</h2>
       {/* esto es lo que se va a mostrar en el fron(tarjetas de puntos) */}
       <div className="container-scroll">
         <ul className="container-li" >
@@ -435,13 +429,20 @@ function Pcoordenadas(prop){
                 <AiOutlinePlayCircle
                   className="play-punto"
                   onClick={async () => {
-                    playThis(p);
+                    /* Esta accion dara play a solo un punto */          
+                    const enviarPunto={
+                      comands:"play",
+                      type:"point",
+                      name:p.name
+                    }
+                    
                     const confirmacionplaypoint1 = window.confirm("El robot se moverá");
                     if (confirmacionplaypoint1) {
                       const confirmacionplaypoint2 = window.confirm("¿Estás seguro?");
                       if (confirmacionplaypoint2) {
                         try {
-                          //await playpoint(p); 
+                          await playpoint(enviarPunto); 
+                          console.log("ejecutando punto:  ",enviarPunto);
                           console.log("robot moviéndose");
                           toast.success("Robot Moviendose", {
                             position: 'bottom-right'
@@ -451,9 +452,15 @@ function Pcoordenadas(prop){
                           toast.error(error.message, {position: 'bottom-right'});
                         }
                       }
+                      else{
+                        toast.error('The move has been canceled',{position:'bottom-right'})
+                      }
+                    }
+                    else{
+                      toast.error('The move has been canceled',{position:'bottom-right'})
                     }
                   }}
-                />
+                  />
 
             </div>
             <div className="pld" >
@@ -482,12 +489,18 @@ function Pcoordenadas(prop){
       </div>
       <div className="footer-card-select">
         <select
+
         className="select"
         defaultValue={""}
         onChange={(e) => {
-          setCurrentMovement(JSON.parse(e.target.value));
+          const value = e.target.value;
+          if (value === "") {
+            setCurrentMovement(null); 
+          } else {
+            setCurrentMovement(JSON.parse(e.target.value));
+          }
         }} >
-          <option value={""}>Reparar luego</option>
+          <option value={""}>Select a move</option>
           {
             movementOptions.map((p,i) =>
               <option className="lista-li" key={i} value={JSON.stringify(p)} >
@@ -496,7 +509,7 @@ function Pcoordenadas(prop){
             )
           }
 
-          </select>
+      </select>
           <div className="opcion-seleccionada">
             selected option:  
             <b>
@@ -578,18 +591,24 @@ function Pcoordenadas(prop){
 
 
 
-    <div className="movimientos-guardados">
-      <h2 className="titulo-card" >Sequence</h2>
+    <div className="container-card">
+      <h2 className="titulo-card" >Sequences</h2>
       <div className="container-scroll">
       <ul className="container-li" >
         <div className="nombrar" >
           <label>Nombrar 3:</label>
-          <input type="text" required autoComplete="off" placeholder="Max 10 Char" maxLength={10} className="input-coordenada escribirname" onChange={(e)=>{setSequenceName(e.target.value)}}/>
+          <input  type="text"
+                  required autoComplete="off"
+                  placeholder="Max 10 Char"
+                  maxLength={10}
+                  className="input-coordenada escribirname"
+                  onChange={(e)=>{setSequenceName(e.target.value)}}
+           />
         </div>
         {movementsList.map((p,index) =>
         <li className="lista-li" key={index} >
           <div className="separacion-play">
-            {/* <AiOutlinePlayCircle className="play-punto" onClick={()=>{playThis(p)}} />  */}
+            <AiOutlinePlayCircle className="play-punto" onClick={()=>{/* playThisMovement() */}} /> 
           </div>
           <div className="pld" >
             <div className="separacion-name">
@@ -611,7 +630,6 @@ function Pcoordenadas(prop){
       <select
         className="select"
         defaultValue={""}
-        name="sequence" 
         onChange={(e) => {
           const value = e.target.value;
           if (value === "") {
@@ -722,8 +740,9 @@ function Pcoordenadas(prop){
 
 
 
-    <div className="sequencias-guardadas">
-
+    <div className="container-card card-full">
+      <h2 className="titulo-card" >View Sequences</h2>
+            
     </div>
 
 
