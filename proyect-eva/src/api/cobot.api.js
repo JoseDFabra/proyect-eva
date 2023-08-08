@@ -7,6 +7,8 @@ const PlayApi = axios.create({
   baseURL:'http://127.0.0.1:8000/api/v1/command/'
 })
 export const playpoint = (point) => PlayApi.post('/', point)
+export const playmovement = (movement) => PlayApi.post('/', movement)
+export const playsequence = (sequence) => PlayApi.post('/', sequence)
 
 //points api
 const puntosApi = axios.create({
