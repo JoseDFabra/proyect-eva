@@ -169,17 +169,27 @@ function Pcoordenadas(prop) {
 
   //funcion para activar y desactivar motores
   const [isActive, setIsActive] = useState(false);
-
+  const [previousState, setPreviousState] = useState(false);
+  
   const handleToggle = () => {
-    setIsActive(!isActive);
+    const newActiveState = !isActive;
+    setPreviousState(isActive); // Guardar el estado anterior
+    setIsActive(newActiveState); // Actualizar el estado actual
+    toast.success(`Motores ${newActiveState ? 'encendidos' : 'apagados'} con éxito.`,{position:'bottom-right'});
     const jsonData = {
       command: "cli",
-      name: isActive ? "motors_on" : "motors_off",
-      type: "null"
+      name: newActiveState ? "motors_on" : "motors_off",
+      type: "null",
     };
     sendCommandJSON(jsonData);
   };
+  
+  const handleCancel = () => {
+    setIsActive(!previousState); // Revertir al estado anterior
+    toast.error('Se canceló el manejo de motores',{position:'bottom-right'});
+  };
 
+  
   const sendCommandJSON = (jsonData) => {
     // Aquí puedes enviar el JSON a través de una solicitud HTTP o realizar cualquier acción que necesites.
     console.log(jsonData); // En este ejemplo, imprimimos el JSON en la consola.
@@ -283,15 +293,27 @@ function Pcoordenadas(prop) {
           </div>
 
           <div className="botton-form">
-            <div className="motor-control">
-              <label className="switch">
-                <input type="checkbox" id="toggleSwitch" onClick={handleToggle} />
-                <span className="slider"></span>
-              </label>
-              <span className="status" id="statusText">
-                {isActive ? "Motores OFF" : "Motores ON."}
-              </span>
-            </div>
+          <div className="motor-control">
+            <label className="switch">
+              <input
+                type="checkbox"
+                id="toggleSwitch"
+                checked={isActive}
+                onChange={() => {
+                  const confirmationMessage = window.confirm("");
+                  if (confirmationMessage) {
+                    handleToggle();
+                  } else {
+                    handleCancel();
+                  }
+                }}
+              />
+              <span className="slider"></span>
+            </label>
+            <span className="status" id="statusText">
+              {isActive ? "Motores ON." : "Motores OFF"}
+            </span>
+          </div>
             <Button text="Save Point" />
           </div>
         </form>
@@ -733,7 +755,7 @@ function Pcoordenadas(prop) {
                       const confirmdelete = window.confirm(
                         "Advertencia: Estás a punto de borrar permanentemente una secuencia. Esta acción no se puede deshacer. Por favor, asegúrate de que estás seleccionando la secuencia correcta para eliminar. ¿Estás seguro de que deseas proceder con la eliminación?"
                       );
-                      if (confirmdelete == true) {
+                      if (confirmdelete === true) {
                         try {
                           await deletesequence(item.name);
                           toast.success("Sequence was deleted", {
