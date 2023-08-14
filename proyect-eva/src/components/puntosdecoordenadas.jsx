@@ -58,7 +58,7 @@ function Pcoordenadas(prop) {
   //lista de secuencias actuales - select
   const [sequenceOptions, setSequenceOptions] = useState([]);
   //secuencia actual seleccionada.
-  const [currentSequences, setCurrentSequences] = useState(undefined); //
+  //const [currentSequences, setCurrentSequences] = useState(undefined); //
   //nombre al momento de guardar la secuencia
   const [sequenceName, setSequenceName] = useState([]);
 
@@ -166,6 +166,25 @@ function Pcoordenadas(prop) {
     }
   }
 
+
+  //funcion para activar y desactivar motores
+  const [isActive, setIsActive] = useState(false);
+
+  const handleToggle = () => {
+    setIsActive(!isActive);
+    const jsonData = {
+      command: "cli",
+      name: isActive ? "motors_on" : "motors_off",
+      type: "null"
+    };
+    sendCommandJSON(jsonData);
+  };
+
+  const sendCommandJSON = (jsonData) => {
+    // Aquí puedes enviar el JSON a través de una solicitud HTTP o realizar cualquier acción que necesites.
+    console.log(jsonData); // En este ejemplo, imprimimos el JSON en la consola.
+  };
+
   return (
     <>
       <div className="container-card">
@@ -262,7 +281,17 @@ function Pcoordenadas(prop) {
               onChange={handleChange}
             />
           </div>
+
           <div className="botton-form">
+            <div className="motor-control">
+              <label className="switch">
+                <input type="checkbox" id="toggleSwitch" onClick={handleToggle} />
+                <span className="slider"></span>
+              </label>
+              <span className="status" id="statusText">
+                {isActive ? "Motores OFF" : "Motores ON."}
+              </span>
+            </div>
             <Button text="Save Point" />
           </div>
         </form>
@@ -298,16 +327,7 @@ function Pcoordenadas(prop) {
             <b>{currentPunto ? currentPunto.name : ""}</b>
           </div>
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          <Button
-            text="Add To The List"
-            onClick={() => {
-              if (currentPunto) {
-                setPuntosList([...puntosList, currentPunto]);
-              } else {
-                toast.error("Select a point", { position: "bottom-right" });
-              }
-            }}
-          />
+          
           <div className="separacion-borrarpunto">
             <Button
               text="Delete Point"
@@ -713,7 +733,7 @@ function Pcoordenadas(prop) {
                       const confirmdelete = window.confirm(
                         "Advertencia: Estás a punto de borrar permanentemente una secuencia. Esta acción no se puede deshacer. Por favor, asegúrate de que estás seleccionando la secuencia correcta para eliminar. ¿Estás seguro de que deseas proceder con la eliminación?"
                       );
-                      if (confirmdelete) {
+                      if (confirmdelete == true) {
                         try {
                           await deletesequence(item.name);
                           toast.success("Sequence was deleted", {
