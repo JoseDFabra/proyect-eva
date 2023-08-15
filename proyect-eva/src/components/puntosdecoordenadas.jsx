@@ -22,8 +22,10 @@ import {
   playpoint,
   playmovement,
   playsequence,
+  manejoMotor,
 } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
+import YourComponent from "./form-robot";
 
 function Pcoordenadas(prop) {
   //form control
@@ -166,33 +168,59 @@ function Pcoordenadas(prop) {
     }
   }
 
-
   //funcion para activar y desactivar motores
   const [isActive, setIsActive] = useState(false);
   const [previousState, setPreviousState] = useState(false);
-  
-  const handleToggle = () => {
+
+  const handleToggle = async () => {
     const newActiveState = !isActive;
     setPreviousState(isActive); // Guardar el estado anterior
     setIsActive(newActiveState); // Actualizar el estado actual
-    toast.success(`Motores ${newActiveState ? 'encendidos' : 'apagados'} con éxito.`,{position:'bottom-right'});
     const jsonData = {
       command: "cli",
       name: newActiveState ? "motors_on" : "motors_off",
       type: "null",
     };
-    sendCommandJSON(jsonData);
-  };
-  
-  const handleCancel = () => {
-    setIsActive(!previousState); // Revertir al estado anterior
-    toast.error('Se canceló el manejo de motores',{position:'bottom-right'});
+    //esto es lo que se tiene que acomodar cuando se conecte a ARIA
+    try {
+      /* const response =  */ await manejoMotor(jsonData);
+      toast.success(
+        `Motores ${newActiveState ? "encendidos" : "apagados"} con éxito.`,
+        { position: "bottom-right" }
+      );
+      if (newActiveState) {
+        const inputObject = {
+          j1: -31.47,
+          j2: -45.03,
+          j3: 64.69,
+          j4: -68.5,
+          j5: -28.3,
+        };
+        const outputObject = {};
+
+        for (const key in inputObject) {
+          if (inputObject.hasOwnProperty(key)) {
+            outputObject[key] = inputObject[key];
+            //console.log(`el valor de ${key}  ${inputObject[key]}`);
+          }
+        }
+        console.log(inputObject);
+        const salida1 = outputObject.j1;
+        const salida2 = outputObject.j2;
+        const salida3 = outputObject.j3;
+        const salida4 = outputObject.j4;
+        const salida5 = outputObject.j5;
+      }
+    } catch (error) {
+      toast.error(error.message, { position: "bottom-right" });
+    }
   };
 
-  
-  const sendCommandJSON = (jsonData) => {
-    // Aquí puedes enviar el JSON a través de una solicitud HTTP o realizar cualquier acción que necesites.
-    console.log(jsonData); // En este ejemplo, imprimimos el JSON en la consola.
+  const handleCancel = () => {
+    setIsActive(!previousState); // Revertir al estado anterior
+    toast.error("Se canceló el manejo de motores", {
+      position: "bottom-right",
+    });
   };
 
   return (
@@ -201,6 +229,7 @@ function Pcoordenadas(prop) {
         <h2 className="titulo-card">Coordinate Points</h2>
 
         <form className="container-form" onSubmit={submit}>
+          
           <div className="container-input ">
             <label htmlFor="name">Name: </label>
             <input
@@ -291,33 +320,40 @@ function Pcoordenadas(prop) {
               onChange={handleChange}
             />
           </div>
-
           <div className="botton-form">
-          <div className="motor-control">
-            <label className="switch">
-              <input
-                type="checkbox"
-                id="toggleSwitch"
-                checked={isActive}
-                onChange={() => {
-                  const confirmationMessage = window.confirm("");
-                  if (confirmationMessage) {
-                    handleToggle();
-                  } else {
-                    handleCancel();
-                  }
-                }}
-              />
-              <span className="slider"></span>
-            </label>
-            <span className="status" id="statusText">
-              {isActive ? "Motores ON." : "Motores OFF"}
-            </span>
-          </div>
+            <div className="contenido1">
+              <div className="motor-control">
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    id="toggleSwitch"
+                    checked={isActive}
+                    onChange={() => {
+                      const actionMessage = isActive ? 'apagarán' : 'energizarán';
+                      const confirmationMessage = window.confirm(`Al confirmar, los motores se ${actionMessage}. ¿Estás seguro/a?`);
+                      if (confirmationMessage) {
+                        handleToggle();
+                      } else {
+                        handleCancel();
+                      }
+                    }}
+                  />
+                  <span className="slider"></span>
+                </label>
+                <span className="status" id="statusText">
+                  {isActive ? "Motores ON" : "Motores OFF"}
+                </span>
+              </div>
+            </div>
+            <div className="contenido2">
             <Button text="Save Point" />
+            </div>
+           
           </div>
         </form>
+        <div className="form2">
 
+        </div>
         <div className="footer-card-select">
           <select
             className="select"
@@ -349,8 +385,29 @@ function Pcoordenadas(prop) {
             <b>{currentPunto ? currentPunto.name : ""}</b>
           </div>
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          
+
           <div className="separacion-borrarpunto">
+          <Button text={"Play punto"} onClick={async ()=>{
+            if(currentPunto){
+              const enviarPunto = {
+                comands: "play",
+                type: "point",
+                name: currentPunto.name,
+              };
+              if(window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"))
+              try{
+                playpoint(enviarPunto);
+                toast.success("Robot Moviendose", { position: "bottom-right" });
+                console.log(enviarPunto);
+                
+              }catch(error){
+                toast.error(error.message, { position: "bottom-right" });
+              }
+            }
+            else{
+              toast.error("Select a point", { position: "bottom-right" });
+            }
+          }} />
             <Button
               text="Delete Point"
               onClick={async () => {
@@ -489,79 +546,84 @@ function Pcoordenadas(prop) {
             <Button text="Save Movement" onClick={savePoints} />
           </div>
           <div className="footer-card-select">
-          <select
-            className="select"
-            defaultValue={""}
-            name="puntos"
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "") {
-                setcurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
-              } else {
-                const p = JSON.parse(value);
-                setcurrentPunto(p);
-              }
-            }}
-          >
-            <option value={""}>Seleccionar punto</option>
-            {pointsOptions.map((p, i) => (
-              <option className="lista-li" key={i} value={JSON.stringify(p)}>
-                {`${p.name}: [${p.motor1_angle}],
+            <select
+              className="select"
+              defaultValue={""}
+              name="puntos"
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "") {
+                  setcurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
+                } else {
+                  const p = JSON.parse(value);
+                  setcurrentPunto(p);
+                }
+              }}
+            >
+              <option value={""}>Seleccionar punto</option>
+              {pointsOptions.map((p, i) => (
+                <option className="lista-li" key={i} value={JSON.stringify(p)}>
+                  {`${p.name}: 
+                  [${p.motor1_angle}],
                   [${p.motor2_angle}],
                   [${p.motor3_angle}],
                   [${p.motor4_angle}],
                   [${p.motor5_angle}]`}
-              </option>
-            ))}
-          </select>
-          <div className="opcion-seleccionada">
-            selected option:
-            <b>{currentPunto ? currentPunto.name : ""}</b>
-          </div>
-          {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
-          <Button
-            text="Add To The List"
-            onClick={() => {
-              if (currentPunto) {
-                setPuntosList([...puntosList, currentPunto]);
-              } else {
-                toast.error("Select a point", { position: "bottom-right" });
-              }
-            }}
-          />
-          <div className="separacion-borrarpunto">
+                </option>
+              ))}
+            </select>
+            <div className="opcion-seleccionada">
+              selected option:
+              <b>{currentPunto ? currentPunto.name : ""}</b>
+            </div>
+            {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
             <Button
-              text="Delete Point"
-              onClick={async () => {
+              text="Add To The List"
+              onClick={() => {
                 if (currentPunto) {
-                  const confirmDelete = window.confirm(
-                    "Atención: Si borras este punto, todos los movimientos asociados a él serán eliminados permanentemente. ¿Estás seguro de que deseas proceder?"
-                  );
-                  if (confirmDelete) {
-                    try {
-                      await deletePoint(currentPunto.name);
-                      toast.success("Point was deleted", {
-                        position: "bottom-right",
-                      });
-                      const nuevospointsOptions = pointsOptions.filter(
-                        (punto) => punto.name !== currentPunto.name
-                      );
-                      setpointsOptions(nuevospointsOptions);
-                      //console.log(nuevospointsOptions);
-                      setcurrentPunto(null);
-                    } catch (error) {
-                      toast.error(error.message, {
-                        position: "bottom-right",
-                      });
-                    }
-                  }
+                  setPuntosList([...puntosList, currentPunto]);
                 } else {
                   toast.error("Select a point", { position: "bottom-right" });
                 }
               }}
             />
+            <div className="separacion-borrarpunto">
+              <Button
+                text="Delete Point"
+                onClick={async () => {
+                  if (currentPunto) {
+                    const confirmDelete = window.confirm(
+                      "Atención: Si borras este punto, todos los movimientos asociados a él serán eliminados permanentemente. ¿Estás seguro de que deseas proceder?"
+                    );
+                    if (confirmDelete) {
+                      try {
+                        await deletePoint(currentPunto.name);
+                        toast.success("Point was deleted", {
+                          position: "bottom-right",
+                        });
+                        const nuevospointsOptions = pointsOptions.filter(
+                          (punto) => punto.name !== currentPunto.name
+                        );
+                        setpointsOptions(nuevospointsOptions);
+                        //console.log(nuevospointsOptions);
+                        setcurrentPunto(null);
+                      } catch (error) {
+                        toast.error(error.message, {
+                          position: "bottom-right",
+                        });
+                      }
+                    }
+                    else{
+                      toast.error("Accion cancelada",{position:'bottom-right'})
+                    }
+                  } 
+                  else {
+                    toast.error("Select a point", { position: "bottom-right" });
+                  }
+                }}
+              />
+            </div>
           </div>
-        </div>
         </div>
       </div>
       <div className="container-card">
@@ -589,17 +651,24 @@ function Pcoordenadas(prop) {
                     <AiOutlinePlayCircle
                       className="play-punto"
                       onClick={async () => {
-                        const afirmarmovement = window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?");
-                        if(afirmarmovement){
+                        const afirmarmovement = window.confirm(
+                          "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                        );
+                        if (afirmarmovement) {
                           try {
                             await playmovement(p.name);
                             console.log(p.name);
-                            toast.success("Robot Moviendose",{position:'bottom-right'})
+                            toast.success("Robot Moviendose", {
+                              position: "bottom-right",
+                            });
                           } catch (error) {
                             toast.error(error.message, {
                               position: "bottom-right",
                             });
                           }
+                        }
+                        else{
+                          toast.error("Se cancelo el movimiento del robot", {position: "bottom-right"});
 
                         }
                       }}
@@ -675,6 +744,32 @@ function Pcoordenadas(prop) {
               }}
             />
             <div className="separacion-borrarpunto ">
+              <Button text="Play movement" onClick={async ()=>{
+            if(currentMovement){
+              const enviarmovement = {
+                comands: "play",
+                type: "movement",
+                name: currentMovement.name,
+              };
+              if(window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?")){
+                try{
+                  playpoint(enviarmovement);
+                  toast.success("Robot Moviendose", { position: "bottom-right" });
+                  console.log(enviarmovement);
+                  
+                }catch(error){
+                  toast.error(error.message, { position: "bottom-right" });
+                }
+              }
+              else{
+                toast.error("se cancelo el movimiento del robot", { position: "bottom-right" });
+
+              }
+            }
+            else{
+              toast.error("Select a movement", { position: "bottom-right" });
+            }
+              }}/>
               <Button
                 text="Delete Movement"
                 onClick={async () => {
@@ -719,19 +814,22 @@ function Pcoordenadas(prop) {
                   <AiOutlinePlayCircle
                     className="play-punto"
                     onClick={async () => {
-                      const afirmarsequence = window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?");
-                        if(afirmarsequence){
-                          try {
-                            await playsequence(item.name);
-                            console.log(item.name);
-                            toast.success("Robot Moviendose",{position:'bottom-right'})
-                          } catch (error) {
-                            toast.error(error.message, {
-                              position: "bottom-right",
-                            });
-                          }
-
+                      const afirmarsequence = window.confirm(
+                        "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                      );
+                      if (afirmarsequence) {
+                        try {
+                          await playsequence(item.name);
+                          console.log(item.name);
+                          toast.success("Robot Moviendose", {
+                            position: "bottom-right",
+                          });
+                        } catch (error) {
+                          toast.error(error.message, {
+                            position: "bottom-right",
+                          });
                         }
+                      }
                     }}
                   />
                 </div>

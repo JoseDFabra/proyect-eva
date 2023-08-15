@@ -96,7 +96,12 @@ input.escribirname.input-coordenada {
   justify-content: space-around;
   align-items: center;
 }
-
+.contenido1{
+  width: 55%;
+}
+.contenido2{
+  width: 45%;
+}
 .img-none img {
   opacity: 0.5; /* Ajusta este valor según cuánta transparencia quieras para la imagen */
 }
