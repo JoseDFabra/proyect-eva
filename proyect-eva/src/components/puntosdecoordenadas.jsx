@@ -107,8 +107,6 @@ function Pcoordenadas(prop) {
     }
   };
 
-  //---------------------------------------------- v2 points -----------------------------
-
   /* Esta accion borrala solo el punto seleccionado en movimientos */
   const deleteThismovement = (index) => {
     const puntosRestantes = [...puntosList]; // Crea una copia de la matriz puntos
@@ -125,7 +123,6 @@ function Pcoordenadas(prop) {
   async function savePoints() {
     if (nameList !== "") {
       const list = new ListaPuntos(nameList, true, puntosList);
-
       try {
         await createMovements(list);
         setMovementOptions((listsOptions) => [...listsOptions, list]);
@@ -135,16 +132,16 @@ function Pcoordenadas(prop) {
       } catch (error) {
         toast.error(error.message, { position: "bottom-right" });
       }
-    } else {
-      toast.error("Please enter a name for the Movement", {
-        position: "bottom-right",
-      });
+    }
+    else {
+      toast.error("Please enter a name for the Movement", {position: "bottom-right"});
     }
   }
 
   function savePointsList() {
     if (currentMovement !== "") {
       setMovementsList((m) => [...m, currentMovement]);
+      console.log(currentMovement);
     }
   }
 
@@ -168,9 +165,13 @@ function Pcoordenadas(prop) {
     }
   }
 
+
+
+
+
   //funcion para activar y desactivar motores
   const [isActive, setIsActive] = useState(false);
-  const [previousState, setPreviousState] = useState(false);
+  const [previousState, setPreviousState] = useState(true);
 
   const handleToggle = async () => {
     const newActiveState = !isActive;
@@ -181,35 +182,26 @@ function Pcoordenadas(prop) {
       name: newActiveState ? "motors_on" : "motors_off",
       type: "null",
     };
+
+
     //esto es lo que se tiene que acomodar cuando se conecte a ARIA
     try {
-      /* const response =  */ await manejoMotor(jsonData);
+      const response = await manejoMotor(jsonData);
+      console.log(response);
       toast.success(
         `Motores ${newActiveState ? "encendidos" : "apagados"} con éxito.`,
         { position: "bottom-right" }
       );
       if (newActiveState) {
-        const inputObject = {
-          j1: -31.47,
-          j2: -45.03,
-          j3: 64.69,
-          j4: -68.5,
-          j5: -28.3,
+        const res = {
+          "name": "P5P",
+          "motor1_angle": 56.0,
+          "motor2_angle": -12.0,
+          "motor3_angle": -30.0,
+          "motor4_angle": 4.0,
+          "motor5_angle": -180.0
         };
-        const outputObject = {};
-
-        for (const key in inputObject) {
-          if (inputObject.hasOwnProperty(key)) {
-            outputObject[key] = inputObject[key];
-            //console.log(`el valor de ${key}  ${inputObject[key]}`);
-          }
-        }
-        console.log(inputObject);
-        const salida1 = outputObject.j1;
-        const salida2 = outputObject.j2;
-        const salida3 = outputObject.j3;
-        const salida4 = outputObject.j4;
-        const salida5 = outputObject.j5;
+        console.log(res);
       }
     } catch (error) {
       toast.error(error.message, { position: "bottom-right" });
@@ -473,6 +465,10 @@ function Pcoordenadas(prop) {
                 />
               </div>
             </div>
+              <div className="active-gripper">
+                <label htmlFor="">Gripper </label>
+                <input type="checkbox"  />
+              </div>
             {Array.isArray(puntosList) && puntosList.length > 0 ? (
               puntosList.map((p, index) => (
                 <li className="lista-li" key={index}>
@@ -676,7 +672,15 @@ function Pcoordenadas(prop) {
                   </div>
                   <div className="pld">
                     <div className="separacion-name">
-                      <b>{p.name}</b>
+                    <b>{`${p.name}:`}</b>
+                    </div>
+                    <div className="separacion-coordenada">
+                      {`[${p.gripper}],
+                      [${p.point1}],
+                      [${p.point2}],
+                      [${p.point3}],
+                      [${p.point4}],
+                      [${p.point5}]`}
                     </div>
                   </div>
 
@@ -724,7 +728,13 @@ function Pcoordenadas(prop) {
               <option value={""}>Select a move</option>
               {movementOptions.map((p, i) => (
                 <option className="lista-li" key={i} value={JSON.stringify(p)}>
-                  {`${p.name}`}
+                  {`${p.name}:    
+                  [${p.gripper}],
+                  [${p.point1}],
+                  [${p.point2}],
+                  [${p.point3}],
+                  [${p.point4}],
+                  [${p.point5}]`}
                 </option>
               ))}
             </select>

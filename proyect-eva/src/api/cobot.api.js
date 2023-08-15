@@ -3,8 +3,6 @@ import axios from 'axios';
 
 
 
-
-
 //command play api
 const PlayApi = axios.create({
   baseURL:'http://127.0.0.1:8000/api/v1/command/'
@@ -12,7 +10,6 @@ const PlayApi = axios.create({
 export const playpoint = (point) => PlayApi.post('/', point)
 export const playmovement = (movement) => PlayApi.post('/', movement)
 export const playsequence = (sequence) => PlayApi.post('/', sequence)
-
 export const manejoMotor = (manejo) => PlayApi.post('/', manejo)
 
 

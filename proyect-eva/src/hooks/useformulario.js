@@ -4,9 +4,7 @@ const useFormulario = (inicial)=>{
   const [formulario, setFormulario] = useState(inicial)
   
   const handleChange = (e)=>{
-    setFormulario({
-      ...formulario,
-      [e.target.name]: e.target.value})
+    setFormulario({...formulario, [e.target.name]: e.target.value})
   }
 
   const reset= ()=>{
