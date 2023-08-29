@@ -119,10 +119,11 @@ function Pcoordenadas(prop) {
     movimientosRestantes.splice(index, 1);
     setMovementsList(movimientosRestantes);
   };
-
+  const [gri, setGri] = useState(false);//manejo del gripper para ver si esta seleccionado o no
+  console.log(gri);
   async function savePoints() {
     if (nameList !== "") {
-      const list = new ListaPuntos(nameList, true, puntosList);
+      const list = new ListaPuntos(nameList, gri? true : false, puntosList);
       try {
         await createMovements(list);
         setMovementOptions((listsOptions) => [...listsOptions, list]);
@@ -194,7 +195,7 @@ function Pcoordenadas(prop) {
       );
       if (newActiveState) {
         const res = {
-          "name": "P5P",
+          "name": "",
           "motor1_angle": 56.0,
           "motor2_angle": -12.0,
           "motor3_angle": -30.0,
@@ -467,7 +468,12 @@ function Pcoordenadas(prop) {
             </div>
               <div className="active-gripper">
                 <label htmlFor="">Gripper </label>
-                <input type="checkbox"  />
+                <input
+                  id="gripperCheckbox"
+                  type="checkbox"
+                  checked={gri}
+                  onChange={(event) => setGri(event.target.checked)}
+                />
               </div>
             {Array.isArray(puntosList) && puntosList.length > 0 ? (
               puntosList.map((p, index) => (

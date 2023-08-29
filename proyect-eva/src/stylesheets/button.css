@@ -3,8 +3,7 @@
   font-size: 1rem;
   padding: 3px;
   border-radius: 8px;
-  background-color: rgb(13, 27, 139);
-  transition: 0.3s ;
+  background-color: rgb(3, 77, 187);
   cursor: pointer;
   user-select: none;
   border: none;
@@ -13,19 +12,18 @@
   margin-right: 3px;
   font-weight: 500;
   color: rgb(255, 255, 255);
-
 }
 .button:hover {
-  background-color: rgb(11, 23, 113);
-  box-shadow: 0 0 3px 1px rgb(11, 23, 113);
+  background-color: rgb(21, 121, 154);
+  box-shadow: 0 0 3px 1px rgba(21, 121, 154, 0.484);
 }
 .button:active {
-  background-color: rgb(13, 28, 139);
+  background-color: rgb(67, 156, 186);
 }
 .red{
-  background-color: rgba(255, 0, 0, 0.742);
+  background-color: rgb(253, 65, 65);
 }
 .red:hover{
-  background-color: red;
-  box-shadow: 0 0 3px 1px red;
+  background-color: rgb(255, 0, 0);
+  box-shadow: 0 0 3px 1px rgba(255, 61, 61, 0.432);
 }
