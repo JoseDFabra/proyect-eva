@@ -12,8 +12,11 @@
   background-color: white;
 }
 .card-full {
-  max-width: 1200px;
-  
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  max-width: 95%;
+  min-height: 100vh;
 }
 .titulo-card {
   width: 100%;
@@ -152,10 +155,10 @@ input.escribirname.input-coordenada {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 120px;
-  width: 24%;
+  height: 40px;
+  width: 100%;
   min-width: 263px;
-  margin: 5px;
+  font-size: 1rem;
 }
 .separacion-borrarpunto {
   display: flex;
@@ -201,16 +204,17 @@ input.escribirname.input-coordenada {
 
 .separacion-name {
   display: flex;
-  width: 45%;
+  max-width: 55%;
   justify-content: center;
 }
 .separacion-coordenada {
   display: flex;
-  font-size: 1rem;
+  font-size: 0.7rem;
   align-items: center;
-  justify-content: center;
   height: 100%;
   width: 100%;
+  overflow: auto;
+
 }
 .pld {
   display: flex;

@@ -25,7 +25,6 @@ import {
   manejoMotor,
 } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
-import YourComponent from "./form-robot";
 
 function Pcoordenadas(prop) {
   //form control
@@ -496,7 +495,6 @@ function Pcoordenadas(prop) {
                           try {
                             await playpoint(enviarPunto);
                             console.log("ejecutando punto:  ", enviarPunto);
-                            console.log("robot moviéndose");
                             toast.success("Robot Moviendose", {
                               position: "bottom-right",
                             });
@@ -638,8 +636,8 @@ function Pcoordenadas(prop) {
                 type="text"
                 required
                 autoComplete="off"
-                placeholder="Max 10 Char"
-                maxLength={10}
+                placeholder="Max 30 Char"
+                maxLength={30}
                 className="input-coordenada escribirname"
                 onChange={(e) => {
                   setSequenceName(e.target.value);
@@ -658,8 +656,8 @@ function Pcoordenadas(prop) {
                         );
                         if (afirmarmovement) {
                           try {
-                            await playmovement(p.name);
-                            console.log(p.name);
+                            await playmovement(p);
+                            console.log(p);
                             toast.success("Robot Moviendose", {
                               position: "bottom-right",
                             });
@@ -819,7 +817,7 @@ function Pcoordenadas(prop) {
           </div>
         </div>
       </div>
-      )
+      
       <div className="container-card card-full">
         <h2 className="titulo-card">View Sequences</h2>
         <ul className="container-li conteiner-viewSequences">
@@ -835,8 +833,8 @@ function Pcoordenadas(prop) {
                       );
                       if (afirmarsequence) {
                         try {
-                          await playsequence(item.name);
-                          console.log(item.name);
+                          await playsequence(item);
+                          console.log(item);
                           toast.success("Robot Moviendose", {
                             position: "bottom-right",
                           });
