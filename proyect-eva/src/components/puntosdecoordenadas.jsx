@@ -25,6 +25,7 @@ import {
   manejoMotor,
 } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
+import Cli from "./cli";
 
 function Pcoordenadas(prop) {
   //form control
@@ -76,7 +77,7 @@ function Pcoordenadas(prop) {
         const sequencesres = await getAllSequences();
         setSequenceOptions(sequencesres.data);
       } catch (error) {
-        toast.error(`${error}`, { position: "bottom-right" });
+        toast.error(error.response.data.name, { position: "bottom-right" });
       }
     }
 
@@ -118,11 +119,11 @@ function Pcoordenadas(prop) {
     movimientosRestantes.splice(index, 1);
     setMovementsList(movimientosRestantes);
   };
-  const [gri, setGri] = useState(false);//manejo del gripper para ver si esta seleccionado o no
+  const [gri, setGri] = useState(false); //manejo del gripper para ver si esta seleccionado o no
   console.log(gri);
   async function savePoints() {
     if (nameList !== "") {
-      const list = new ListaPuntos(nameList, gri? true : false, puntosList);
+      const list = new ListaPuntos(nameList, gri ? true : false, puntosList);
       try {
         await createMovements(list);
         setMovementOptions((listsOptions) => [...listsOptions, list]);
@@ -132,9 +133,10 @@ function Pcoordenadas(prop) {
       } catch (error) {
         toast.error(error.response.data.name, { position: "bottom-right" });
       }
-    }
-    else {
-      toast.error("Please enter a name for the Movement", {position: "bottom-right"});
+    } else {
+      toast.error("Please enter a name for the Movement", {
+        position: "bottom-right",
+      });
     }
   }
 
@@ -165,10 +167,6 @@ function Pcoordenadas(prop) {
     }
   }
 
-
-
-
-
   //funcion para activar y desactivar motores
   const [isActive, setIsActive] = useState(false);
   const [previousState, setPreviousState] = useState(true);
@@ -180,9 +178,8 @@ function Pcoordenadas(prop) {
     const jsonData = {
       command: "cli",
       type: newActiveState ? "motors_on" : "motors_off",
-      name: "null"
+      name: "null",
     };
-
 
     //esto es lo que se tiene que acomodar cuando se conecte a ARIA
     try {
@@ -194,16 +191,17 @@ function Pcoordenadas(prop) {
       );
       if (newActiveState) {
         const res = {
-          "name": "",
-          "motor1_angle": 56.0,
-          "motor2_angle": -12.0,
-          "motor3_angle": -30.0,
-          "motor4_angle": 4.0,
-          "motor5_angle": -180.0
+          name: "",
+          motor1_angle: 56.0,
+          motor2_angle: -12.0,
+          motor3_angle: -30.0,
+          motor4_angle: 4.0,
+          motor5_angle: -180.0,
         };
         console.log(res);
-        console.log('aqui se extraen los datos de los motores cuando se encienden');
-
+        console.log(
+          "aqui se extraen los datos de los motores cuando se encienden"
+        );
       }
     } catch (error) {
       toast.error(error.response.data.name, { position: "bottom-right" });
@@ -219,11 +217,11 @@ function Pcoordenadas(prop) {
 
   return (
     <>
+      <Cli />
       <div className="container-card">
         <h2 className="titulo-card">Coordinate Points</h2>
 
         <form className="container-form" onSubmit={submit}>
-          
           <div className="container-input ">
             <label htmlFor="name">Name: </label>
             <input
@@ -323,8 +321,12 @@ function Pcoordenadas(prop) {
                     id="toggleSwitch"
                     checked={isActive}
                     onChange={() => {
-                      const actionMessage = isActive ? 'apagarán' : 'energizarán';
-                      const confirmationMessage = window.confirm(`Al confirmar, los motores se ${actionMessage}. ¿Estás seguro/a?`);
+                      const actionMessage = isActive
+                        ? "apagarán"
+                        : "energizarán";
+                      const confirmationMessage = window.confirm(
+                        `Al confirmar, los motores se ${actionMessage}. ¿Estás seguro/a?`
+                      );
                       if (confirmationMessage) {
                         handleToggle();
                       } else {
@@ -340,14 +342,11 @@ function Pcoordenadas(prop) {
               </div>
             </div>
             <div className="contenido2">
-            <Button text="Save Point" />
+              <Button text="Save Point" />
             </div>
-           
           </div>
         </form>
-        <div className="form2">
-
-        </div>
+        <div className="form2"></div>
         <div className="footer-card-select">
           <select
             className="select"
@@ -381,31 +380,40 @@ function Pcoordenadas(prop) {
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
 
           <div className="separacion-borrarpunto">
-          <Button text={"Play punto"} onClick={async ()=>{
-            if(currentPunto){
-              const enviarPunto = {
-                command: "play",
-                type: "point",
-                name: currentPunto.name,
-              };
-              if(window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"))
-              try{
-                playpoint(enviarPunto);
-                toast.success("Robot Moviendose", { position: "bottom-right" });
-                console.log({
-                  command: "play",
-                  type: "point",
-                  name: currentPunto.name,
-                });
-                
-              }catch(error){
-                toast.error(error.response.data.name, { position: "bottom-right" });
-              }
-            }
-            else{
-              toast.error("Select a point", { position: "bottom-right" });
-            }
-          }} />
+            <Button
+              text={"Play punto"}
+              onClick={async () => {
+                if (currentPunto) {
+                  const enviarPunto = {
+                    command: "play",
+                    type: "point",
+                    name: currentPunto.name,
+                  };
+                  if (
+                    window.confirm(
+                      "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                    )
+                  )
+                    try {
+                      playpoint(enviarPunto);
+                      toast.success("Robot Moviendose", {
+                        position: "bottom-right",
+                      });
+                      console.log({
+                        command: "play",
+                        type: "point",
+                        name: currentPunto.name,
+                      });
+                    } catch (error) {
+                      toast.error(error.response.data.name, {
+                        position: "bottom-right",
+                      });
+                    }
+                } else {
+                  toast.error("Select a point", { position: "bottom-right" });
+                }
+              }}
+            />
             <Button
               text="Delete Point"
               onClick={async () => {
@@ -424,7 +432,7 @@ function Pcoordenadas(prop) {
                       );
                       setpointsOptions(nuevospointsOptions);
                       //console.log(nuevospointsOptions);
-                      setcurrentPunto(null);  
+                      setcurrentPunto(null);
                     } catch (error) {
                       toast.error(error.response.data.name, {
                         position: "bottom-right",
@@ -471,15 +479,15 @@ function Pcoordenadas(prop) {
                 />
               </div>
             </div>
-              <div className="active-gripper">
-                <label htmlFor="">Gripper </label>
-                <input
-                  id="gripperCheckbox"
-                  type="checkbox"
-                  checked={gri}
-                  onChange={(event) => setGri(event.target.checked)}
-                />
-              </div>
+            <div className="active-gripper">
+              <label htmlFor="">Gripper </label>
+              <input
+                id="gripperCheckbox"
+                type="checkbox"
+                checked={gri}
+                onChange={(event) => setGri(event.target.checked)}
+              />
+            </div>
             {Array.isArray(puntosList) && puntosList.length > 0 ? (
               puntosList.map((p, index) => (
                 <li className="lista-li" key={index}>
@@ -617,12 +625,12 @@ function Pcoordenadas(prop) {
                           position: "bottom-right",
                         });
                       }
+                    } else {
+                      toast.error("Accion cancelada", {
+                        position: "bottom-right",
+                      });
                     }
-                    else{
-                      toast.error("Accion cancelada",{position:'bottom-right'})
-                    }
-                  } 
-                  else {
+                  } else {
                     toast.error("Select a point", { position: "bottom-right" });
                   }
                 }}
@@ -659,11 +667,11 @@ function Pcoordenadas(prop) {
                         const afirmarmovement = window.confirm(
                           "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
                         );
-                        const playmov ={
-                          "command":"play",
-                          "type":"movement",
-                          "name":p.name
-                        }
+                        const playmov = {
+                          command: "play",
+                          type: "movement",
+                          name: p.name,
+                        };
                         if (afirmarmovement) {
                           try {
                             await playmovement(playmov);
@@ -676,17 +684,17 @@ function Pcoordenadas(prop) {
                               position: "bottom-right",
                             });
                           }
-                        }
-                        else{
-                          toast.error("Se cancelo el movimiento del robot", {position: "bottom-right"});
-
+                        } else {
+                          toast.error("Se cancelo el movimiento del robot", {
+                            position: "bottom-right",
+                          });
                         }
                       }}
                     />
                   </div>
                   <div className="pld">
                     <div className="separacion-name">
-                    <b>{`${p.name}:`}</b>
+                      <b>{`${p.name}:`}</b>
                     </div>
                     <div className="separacion-coordenada">
                       {`[${p.gripper}],
@@ -768,32 +776,43 @@ function Pcoordenadas(prop) {
               }}
             />
             <div className="separacion-borrarpunto ">
-              <Button text="Play movement" onClick={async ()=>{
-            if(currentMovement){
-              const enviarmovement = {
-                command: "play",
-                type: "movement",
-                name: currentMovement.name,
-              };
-              if(window.confirm("Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?")){
-                try{
-                  playpoint(enviarmovement);
-                  toast.success("Robot Moviendose", { position: "bottom-right" });
-                  console.log(enviarmovement);
-                  
-                }catch(error){
-                  toast.error(error.response.data.name, { position: "bottom-right" });
-                }
-              }
-              else{
-                toast.error("se cancelo el movimiento del robot", { position: "bottom-right" });
-
-              }
-            }
-            else{
-              toast.error("Select a movement", { position: "bottom-right" });
-            }
-              }}/>
+              <Button
+                text="Play movement"
+                onClick={async () => {
+                  if (currentMovement) {
+                    const enviarmovement = {
+                      command: "play",
+                      type: "movement",
+                      name: currentMovement.name,
+                    };
+                    if (
+                      window.confirm(
+                        "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                      )
+                    ) {
+                      try {
+                        playpoint(enviarmovement);
+                        toast.success("Robot Moviendose", {
+                          position: "bottom-right",
+                        });
+                        console.log(enviarmovement);
+                      } catch (error) {
+                        toast.error(error.response.data.name, {
+                          position: "bottom-right",
+                        });
+                      }
+                    } else {
+                      toast.error("se cancelo el movimiento del robot", {
+                        position: "bottom-right",
+                      });
+                    }
+                  } else {
+                    toast.error("Select a movement", {
+                      position: "bottom-right",
+                    });
+                  }
+                }}
+              />
               <Button
                 text="Delete Movement"
                 onClick={async () => {
@@ -827,7 +846,7 @@ function Pcoordenadas(prop) {
           </div>
         </div>
       </div>
-      
+
       <div className="container-card card-full">
         <h2 className="titulo-card">View Sequences</h2>
         <ul className="container-li conteiner-viewSequences">
@@ -838,15 +857,14 @@ function Pcoordenadas(prop) {
                   <AiOutlinePlayCircle
                     className="play-punto"
                     onClick={async () => {
-
                       const afirmarsequence = window.confirm(
                         "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
                       );
                       const playseq = {
-                        "command":"play",
-                        "type":"sequence",
-                        "name": item.name
-                      }
+                        command: "play",
+                        type: "sequence",
+                        name: item.name,
+                      };
                       if (afirmarsequence) {
                         try {
                           await playsequence(playseq);

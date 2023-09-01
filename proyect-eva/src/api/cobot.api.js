@@ -10,6 +10,8 @@ export const playpoint = (point) => PlayApi.post('/', point)
 export const playmovement = (movement) => PlayApi.post('/', movement)
 export const playsequence = (sequence) => PlayApi.post('/', sequence)
 export const manejoMotor = (manejo) => PlayApi.post('/', manejo)
+export const setHome = (home) => PlayApi.post('/', home)
+export const getAngles = (angles) => PlayApi.post('/', angles)
 
 
 
