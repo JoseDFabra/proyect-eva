@@ -102,7 +102,7 @@ function Pcoordenadas(prop) {
       toast.success("Punto Creado", { position: "bottom-right" });
       reset();
     } catch (error) {
-      toast.error(error.message, { position: "bottom-right" });
+      toast.error(error.response.data.name, { position: "bottom-right" });
     }
   };
 
@@ -130,7 +130,7 @@ function Pcoordenadas(prop) {
         setNameList("");
         setPuntosList([]);
       } catch (error) {
-        toast.error(error.message, { position: "bottom-right" });
+        toast.error(error.response.data.name, { position: "bottom-right" });
       }
     }
     else {
@@ -154,7 +154,7 @@ function Pcoordenadas(prop) {
           setSequenceOptions([...sequenceOptions, response.data]);
         }
       } catch (error) {
-        toast.error(error.message, {
+        toast.error(error.response.data.name, {
           position: "bottom-right",
         });
       }
@@ -179,8 +179,8 @@ function Pcoordenadas(prop) {
     setIsActive(newActiveState); // Actualizar el estado actual
     const jsonData = {
       command: "cli",
-      name: newActiveState ? "motors_on" : "motors_off",
-      type: "null",
+      type: newActiveState ? "motors_on" : "motors_off",
+      name: "null"
     };
 
 
@@ -202,9 +202,11 @@ function Pcoordenadas(prop) {
           "motor5_angle": -180.0
         };
         console.log(res);
+        console.log('aqui se extraen los datos de los motores cuando se encienden');
+
       }
     } catch (error) {
-      toast.error(error.message, { position: "bottom-right" });
+      toast.error(error.response.data.name, { position: "bottom-right" });
     }
   };
 
@@ -228,10 +230,10 @@ function Pcoordenadas(prop) {
               type="text"
               name="name"
               id="name"
-              placeholder="Max 10 Char"
+              placeholder="Max 5 Char"
               title="Maximo 10 caracteres"
               autoComplete="off"
-              maxLength={10}
+              maxLength={5}
               required
               className="input-coordenada escribirname"
               value={formulario.name}
@@ -382,7 +384,7 @@ function Pcoordenadas(prop) {
           <Button text={"Play punto"} onClick={async ()=>{
             if(currentPunto){
               const enviarPunto = {
-                comands: "play",
+                command: "play",
                 type: "point",
                 name: currentPunto.name,
               };
@@ -390,10 +392,14 @@ function Pcoordenadas(prop) {
               try{
                 playpoint(enviarPunto);
                 toast.success("Robot Moviendose", { position: "bottom-right" });
-                console.log(enviarPunto);
+                console.log({
+                  command: "play",
+                  type: "point",
+                  name: currentPunto.name,
+                });
                 
               }catch(error){
-                toast.error(error.message, { position: "bottom-right" });
+                toast.error(error.response.data.name, { position: "bottom-right" });
               }
             }
             else{
@@ -418,9 +424,9 @@ function Pcoordenadas(prop) {
                       );
                       setpointsOptions(nuevospointsOptions);
                       //console.log(nuevospointsOptions);
-                      setcurrentPunto(null);
+                      setcurrentPunto(null);  
                     } catch (error) {
-                      toast.error(error.message, {
+                      toast.error(error.response.data.name, {
                         position: "bottom-right",
                       });
                     }
@@ -483,7 +489,7 @@ function Pcoordenadas(prop) {
                       onClick={async () => {
                         /* Esta accion dara play a solo un punto */
                         const enviarPunto = {
-                          comands: "play",
+                          command: "play",
                           type: "point",
                           name: p.name,
                         };
@@ -494,12 +500,11 @@ function Pcoordenadas(prop) {
                         if (confirmacionplaypoint1) {
                           try {
                             await playpoint(enviarPunto);
-                            console.log("ejecutando punto:  ", enviarPunto);
                             toast.success("Robot Moviendose", {
                               position: "bottom-right",
                             });
                           } catch (error) {
-                            toast.error(error.message, {
+                            toast.error(error.response.data.name, {
                               position: "bottom-right",
                             });
                           }
@@ -608,7 +613,7 @@ function Pcoordenadas(prop) {
                         //console.log(nuevospointsOptions);
                         setcurrentPunto(null);
                       } catch (error) {
-                        toast.error(error.message, {
+                        toast.error(error.response.data.name, {
                           position: "bottom-right",
                         });
                       }
@@ -654,15 +659,20 @@ function Pcoordenadas(prop) {
                         const afirmarmovement = window.confirm(
                           "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
                         );
+                        const playmov ={
+                          "command":"play",
+                          "type":"movement",
+                          "name":p.name
+                        }
                         if (afirmarmovement) {
                           try {
-                            await playmovement(p);
-                            console.log(p);
+                            await playmovement(playmov);
+                            console.log(playmov);
                             toast.success("Robot Moviendose", {
                               position: "bottom-right",
                             });
                           } catch (error) {
-                            toast.error(error.message, {
+                            toast.error(error.response.data.name, {
                               position: "bottom-right",
                             });
                           }
@@ -761,7 +771,7 @@ function Pcoordenadas(prop) {
               <Button text="Play movement" onClick={async ()=>{
             if(currentMovement){
               const enviarmovement = {
-                comands: "play",
+                command: "play",
                 type: "movement",
                 name: currentMovement.name,
               };
@@ -772,7 +782,7 @@ function Pcoordenadas(prop) {
                   console.log(enviarmovement);
                   
                 }catch(error){
-                  toast.error(error.message, { position: "bottom-right" });
+                  toast.error(error.response.data.name, { position: "bottom-right" });
                 }
               }
               else{
@@ -803,7 +813,7 @@ function Pcoordenadas(prop) {
                         setMovementOptions(newlistsOptions);
                         setCurrentMovement(null);
                       } catch (error) {
-                        toast.error(error.message, {
+                        toast.error(error.response.data.name, {
                           position: "bottom-right",
                         });
                       }
@@ -828,18 +838,23 @@ function Pcoordenadas(prop) {
                   <AiOutlinePlayCircle
                     className="play-punto"
                     onClick={async () => {
+
                       const afirmarsequence = window.confirm(
                         "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
                       );
+                      const playseq = {
+                        "command":"play",
+                        "type":"sequence",
+                        "name": item.name
+                      }
                       if (afirmarsequence) {
                         try {
-                          await playsequence(item);
-                          console.log(item);
+                          await playsequence(playseq);
                           toast.success("Robot Moviendose", {
                             position: "bottom-right",
                           });
                         } catch (error) {
-                          toast.error(error.message, {
+                          toast.error(error.response.data.name, {
                             position: "bottom-right",
                           });
                         }
@@ -878,7 +893,7 @@ function Pcoordenadas(prop) {
                           );
                           setSequenceOptions(nuevosequence);
                         } catch (error) {
-                          toast.error(error.message, {
+                          toast.error(error.response.data.name, {
                             position: "bottom-right",
                           });
                         }

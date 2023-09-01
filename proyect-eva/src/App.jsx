@@ -52,7 +52,8 @@ function App() {
 
       <footer className="footer">
         <div className="footer-left">
-          <img src={require(`./images/b.png`)} alt="banco" />
+          Grupo HDI Colombia
+          {/* <img src={require("...")} alt="banco" /> */}
         </div>
         <div className="footer-mid">
           <p>

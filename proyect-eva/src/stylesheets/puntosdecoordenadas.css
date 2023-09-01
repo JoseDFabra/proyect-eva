@@ -204,15 +204,16 @@ input.escribirname.input-coordenada {
 
 .separacion-name {
   display: flex;
-  max-width: 55%;
+  max-width: 60%;
   justify-content: center;
 }
 .separacion-coordenada {
+  padding-left: 10px;
   display: flex;
   font-size: 0.7rem;
   align-items: center;
   height: 100%;
-  width: 100%;
+  width: 90%;
   overflow: auto;
 
 }
