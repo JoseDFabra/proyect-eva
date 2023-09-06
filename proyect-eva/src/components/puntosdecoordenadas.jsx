@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../stylesheets/puntosdecoordenadas.css";
 import Button from "./button";
-import useFormulario from "../hooks/useformulario";
 import {
   AiOutlineCloseCircle,
   AiOutlineDelete,
@@ -11,8 +10,10 @@ import { ListaPuntos } from "../models/ListaPuntos";
 import { Sequence } from "../models/Sequence";
 import {
   getAllPoints,
+  getpoint,
   createPoint,
   deletePoint,
+  updatePoint,
   getAllMovements,
   createMovements,
   deleteMovements,
@@ -26,23 +27,24 @@ import {
 } from "../api/cobot.api";
 import { toast } from "react-hot-toast";
 import Cli from "./cli";
+import { useForm } from "react-hook-form";
 
 function Pcoordenadas(prop) {
-  //form control
-  const [formulario, handleChange, reset] = useFormulario({
-    name: "",
-    motor1_angle: "",
-    motor2_angle: "",
-    motor3_angle: "",
-    motor4_angle: "",
-    motor5_angle: "",
-  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch
+  } = useForm();
 
   //puntos
   //puntos de select
   const [pointsOptions, setpointsOptions] = useState([]); //lista de puntos
   //punto seleccionado del select
-  const [currentPunto, setcurrentPunto] = useState(undefined); //
+  const [currentPunto, setCurrentPunto] = useState(undefined); //
 
   //movimientos
   //lista de puntos
@@ -84,28 +86,63 @@ function Pcoordenadas(prop) {
     loadPointsAndMovements();
   }, []);
 
-  /* const submit = async e =>{
-    e.preventDefault();
-    //setpointsOptions([...pointsOptions,formulario,])
-    await createPoint(formulario)
-    toast.success('Punto Creado')
-    reset();
-  } */
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const submit = handleSubmit(async (data) => {
     try {
-      //setpointsOptions([...pointsOptions, formulario,])
-      await createPoint(formulario);
+      await createPoint(data);
       setTimeout(() => {
         window.location.reload(); // Actualizar la página
       }, 2000);
       toast.success("Punto Creado", { position: "bottom-right" });
       reset();
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(error.response.data.name, { position: "bottom-right" });
     }
+  });
+  
+  useEffect(() => {
+    const llamada = async () => {
+      console.log(currentPunto);
+      const res = await getpoint(currentPunto.name);
+      console.log(res.data);
+      setValue("name", res.data.name);
+      setValue("motor1_angle", res.data.motor1_angle);
+      setValue("motor2_angle", res.data.motor2_angle);
+      setValue("motor3_angle", res.data.motor3_angle);
+      setValue("motor4_angle", res.data.motor4_angle);
+      setValue("motor5_angle", res.data.motor5_angle);
+    };
+    if (currentPunto) {
+      llamada();
+    }
+  }, [currentPunto, setValue,]);
+  
+  const actualizandoPunto = async () => {
+    if (currentPunto){
+      try{
+        if(window.confirm("Seguro que desea actualizar este punto?")){
+          const res = await updatePoint(currentPunto.name, watch());
+          console.log(res);
+          setTimeout(() => {window.location.reload();}, 20000);
+          toast.success(`${res.data.name} Actualizado`, { position: "bottom-right" });        
+        }
+      }
+      catch(error){
+        toast.success(error.response.data.name, { position: "bottom-right" });        
+      }
+    }
+    else{
+      toast.error("Seleccione un punto", { position: "bottom-right" });        
+      
+    }
   };
+
+
+
+
+
+
 
   /* Esta accion borrala solo el punto seleccionado en movimientos */
   const deleteThismovement = (index) => {
@@ -226,17 +263,11 @@ function Pcoordenadas(prop) {
             <label htmlFor="name">Name: </label>
             <input
               type="text"
-              name="name"
-              id="name"
               placeholder="Max 5 Char"
-              title="Maximo 10 caracteres"
-              autoComplete="off"
-              maxLength={5}
-              required
               className="input-coordenada escribirname"
-              value={formulario.name}
-              onChange={handleChange}
-            />
+              {...register("name",{required: true, maxLength: 5})}
+              />
+              {errors.name && <small>The name is required</small>}
           </div>
 
           <div className="container-input">
@@ -244,73 +275,49 @@ function Pcoordenadas(prop) {
             <input
               type="number"
               name="motor1_angle"
-              id="motor1_angle"
-              min={-125}
-              max={125}
-              required
               className="input-coordenada"
-              value={formulario.motor1_angle}
-              onChange={handleChange}
-            />
+              {...register("motor1_angle",{required: true, max: 125, min: -125})}
+              />
+              {errors.motor1_angle && <small> Motor1_angle is required</small>}
           </div>
 
           <div className="container-input">
             <label htmlFor="motor2_angle">motor 2 angle: </label>
             <input
               type="number"
-              name="motor2_angle"
-              id="motor2_angle"
-              min={-125}
-              max={125}
-              required
               className="input-coordenada"
-              value={formulario.motor2_angle}
-              onChange={handleChange}
-            />
+              {...register("motor2_angle",{required: true, max: 125, min: -125})}
+              />
+              {errors.motor2_angle && <small> Motor2_angle is required</small>}
           </div>
 
           <div className="container-input">
             <label htmlFor="motor3_angle">motor 3 angle: </label>
             <input
               type="number"
-              name="motor3_angle"
-              id="motor3_angle"
-              min={-125}
-              max={125}
-              required
               className="input-coordenada"
-              value={formulario.motor3_angle}
-              onChange={handleChange}
-            />
+              {...register("motor3_angle",{required: true, max: 125, min: -125})}
+              />
+              {errors.motor3_angle && <small> Motor3_angle is required</small>}
           </div>
 
           <div className="container-input">
             <label htmlFor="motor4_angle">motor 4 angle: </label>
             <input
               type="number"
-              name="motor4_angle"
-              id="motor4_angle"
-              min={-125}
-              max={125}
-              required
               className="input-coordenada"
-              value={formulario.motor4_angle}
-              onChange={handleChange}
-            />
+              {...register("motor4_angle",{required: true, max: 125, min: -125})}
+              />
+              {errors.motor4_angle && <small> Motor4_angle is required</small>}
           </div>
           <div className="container-input">
             <label htmlFor="motor5_angle">motor 5 angle: </label>
             <input
               type="number"
-              name="motor5_angle"
-              id="motor5_angle"
-              min={-125}
-              max={125}
-              required
               className="input-coordenada"
-              value={formulario.motor5_angle}
-              onChange={handleChange}
-            />
+              {...register("motor5_angle",{required: true, max: 125, min: -125})}
+              />
+              {errors.motor5_angle && <small> Motor5_angle is required</small>}
           </div>
           <div className="botton-form">
             <div className="contenido1">
@@ -355,10 +362,10 @@ function Pcoordenadas(prop) {
             onChange={(e) => {
               const value = e.target.value;
               if (value === "") {
-                setcurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
+                setCurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
               } else {
                 const p = JSON.parse(value);
-                setcurrentPunto(p);
+                setCurrentPunto(p);
               }
             }}
           >
@@ -381,39 +388,9 @@ function Pcoordenadas(prop) {
 
           <div className="separacion-borrarpunto">
             <Button
-              text={"Play punto"}
-              onClick={async () => {
-                if (currentPunto) {
-                  const enviarPunto = {
-                    command: "play",
-                    type: "point",
-                    name: currentPunto.name,
-                  };
-                  if (
-                    window.confirm(
-                      "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
-                    )
-                  )
-                    try {
-                      playpoint(enviarPunto);
-                      toast.success("Robot Moviendose", {
-                        position: "bottom-right",
-                      });
-                      console.log({
-                        command: "play",
-                        type: "point",
-                        name: currentPunto.name,
-                      });
-                    } catch (error) {
-                      toast.error(error.response.data.name, {
-                        position: "bottom-right",
-                      });
-                    }
-                } else {
-                  toast.error("Select a point", { position: "bottom-right" });
-                }
-              }}
-            />
+              text={"Update Punto"}
+              onClick={actualizandoPunto}
+              />
             <Button
               text="Delete Point"
               onClick={async () => {
@@ -432,7 +409,7 @@ function Pcoordenadas(prop) {
                       );
                       setpointsOptions(nuevospointsOptions);
                       //console.log(nuevospointsOptions);
-                      setcurrentPunto(null);
+                      setCurrentPunto(null);
                     } catch (error) {
                       toast.error(error.response.data.name, {
                         position: "bottom-right",
@@ -470,11 +447,7 @@ function Pcoordenadas(prop) {
               <div className="contenedor-refesh">
                 <AiOutlineDelete
                   onClick={() => {
-                    const desicion = window.confirm("Desea vaciar esta lista?");
-                    if (desicion) {
-                      setPuntosList([]);
-                    } else {
-                    }
+                    setPuntosList([]);
                   }}
                 />
               </div>
@@ -566,10 +539,10 @@ function Pcoordenadas(prop) {
               onChange={(e) => {
                 const value = e.target.value;
                 if (value === "") {
-                  setcurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
+                  setCurrentPunto(null); // o cualquier otro valor adecuado para representar "Seleccionar punto"
                 } else {
                   const p = JSON.parse(value);
-                  setcurrentPunto(p);
+                  setCurrentPunto(p);
                 }
               }}
             >
@@ -617,9 +590,9 @@ function Pcoordenadas(prop) {
                         const nuevospointsOptions = pointsOptions.filter(
                           (punto) => punto.name !== currentPunto.name
                         );
-                        setpointsOptions(nuevospointsOptions);
+                        setpointsOptions(nuevospointsOptions); 
                         //console.log(nuevospointsOptions);
-                        setcurrentPunto(null);
+                        setCurrentPunto(null);
                       } catch (error) {
                         toast.error(error.response.data.name, {
                           position: "bottom-right",
@@ -644,7 +617,9 @@ function Pcoordenadas(prop) {
         <div className="container-scroll">
           <ul className="container-li">
             <div className="nombrar">
+              
               <label>Nombrar sequence:</label>
+              
               <input
                 type="text"
                 required
@@ -656,6 +631,7 @@ function Pcoordenadas(prop) {
                   setSequenceName(e.target.value);
                 }}
               />
+              
             </div>
             {Array.isArray(movementsList) && movementsList.length > 0 ? (
               movementsList.map((p, index) => (

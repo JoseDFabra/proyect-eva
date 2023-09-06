@@ -24,8 +24,10 @@ const puntosApi = axios.create({
   baseURL:`${urlpp}edit/point`
 })
 export const getAllPoints = () => puntosApi.get('/')
+export const getpoint =(id)=> puntosApi.get(`/${id}/`)
 export const createPoint = (point) => puntosApi.post('/', point)
 export const deletePoint = (name) => puntosApi.delete(`/${name}/`)
+export const updatePoint = (id, point) => puntosApi.put(`/${id}/`, point);
 
 //movimientos api
 const movimientosApi = axios.create({
