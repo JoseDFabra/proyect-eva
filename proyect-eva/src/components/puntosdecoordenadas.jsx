@@ -28,16 +28,16 @@ import {
 import { toast } from "react-hot-toast";
 import Cli from "./cli";
 import { useForm } from "react-hook-form";
+import { ReactSortable } from "react-sortablejs";
 
 function Pcoordenadas(prop) {
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-    watch
+    watch,
   } = useForm();
 
   //puntos
@@ -86,7 +86,6 @@ function Pcoordenadas(prop) {
     loadPointsAndMovements();
   }, []);
 
-
   const submit = handleSubmit(async (data) => {
     try {
       await createPoint(data);
@@ -95,17 +94,16 @@ function Pcoordenadas(prop) {
       }, 2000);
       toast.success("Punto Creado", { position: "bottom-right" });
       reset();
-    }
-    catch (error) {
+    } catch (error) {
       toast.error(error.response.data.name, { position: "bottom-right" });
     }
   });
-  
+
   useEffect(() => {
     const llamada = async () => {
-      console.log(currentPunto);
+      //console.log(currentPunto);
       const res = await getpoint(currentPunto.name);
-      console.log(res.data);
+      //console.log(res.data);
       setValue("name", res.data.name);
       setValue("motor1_angle", res.data.motor1_angle);
       setValue("motor2_angle", res.data.motor2_angle);
@@ -116,33 +114,28 @@ function Pcoordenadas(prop) {
     if (currentPunto) {
       llamada();
     }
-  }, [currentPunto, setValue,]);
-  
+  }, [currentPunto, setValue]);
+
   const actualizandoPunto = async () => {
-    if (currentPunto){
-      try{
-        if(window.confirm("Seguro que desea actualizar este punto?")){
+    if (currentPunto) {
+      try {
+        if (window.confirm("Seguro que desea actualizar este punto?")) {
           const res = await updatePoint(currentPunto.name, watch());
           console.log(res);
-          setTimeout(() => {window.location.reload();}, 20000);
-          toast.success(`${res.data.name} Actualizado`, { position: "bottom-right" });        
+          setTimeout(() => {
+            window.location.reload();
+          }, 20000);
+          toast.success(`${res.data.name} Actualizado`, {
+            position: "bottom-right",
+          });
         }
+      } catch (error) {
+        toast.success(error.response.data.name, { position: "bottom-right" });
       }
-      catch(error){
-        toast.success(error.response.data.name, { position: "bottom-right" });        
-      }
-    }
-    else{
-      toast.error("Seleccione un punto", { position: "bottom-right" });        
-      
+    } else {
+      toast.error("Seleccione un punto", { position: "bottom-right" });
     }
   };
-
-
-
-
-
-
 
   /* Esta accion borrala solo el punto seleccionado en movimientos */
   const deleteThismovement = (index) => {
@@ -157,7 +150,6 @@ function Pcoordenadas(prop) {
     setMovementsList(movimientosRestantes);
   };
   const [gri, setGri] = useState(false); //manejo del gripper para ver si esta seleccionado o no
-  console.log(gri);
   async function savePoints() {
     if (nameList !== "") {
       const list = new ListaPuntos(nameList, gri ? true : false, puntosList);
@@ -265,9 +257,9 @@ function Pcoordenadas(prop) {
               type="text"
               placeholder="Max 5 Char"
               className="input-coordenada escribirname"
-              {...register("name",{required: true, maxLength: 5})}
-              />
-              {errors.name && <small>The name is required</small>}
+              {...register("name", { required: true, maxLength: 5 })}
+            />
+            {errors.name && <small>The name is required</small>}
           </div>
 
           <div className="container-input">
@@ -276,9 +268,13 @@ function Pcoordenadas(prop) {
               type="number"
               name="motor1_angle"
               className="input-coordenada"
-              {...register("motor1_angle",{required: true, max: 125, min: -125})}
-              />
-              {errors.motor1_angle && <small> Motor1_angle is required</small>}
+              {...register("motor1_angle", {
+                required: true,
+                max: 125,
+                min: -125,
+              })}
+            />
+            {errors.motor1_angle && <small> Motor1_angle is required</small>}
           </div>
 
           <div className="container-input">
@@ -286,9 +282,13 @@ function Pcoordenadas(prop) {
             <input
               type="number"
               className="input-coordenada"
-              {...register("motor2_angle",{required: true, max: 125, min: -125})}
-              />
-              {errors.motor2_angle && <small> Motor2_angle is required</small>}
+              {...register("motor2_angle", {
+                required: true,
+                max: 125,
+                min: -125,
+              })}
+            />
+            {errors.motor2_angle && <small> Motor2_angle is required</small>}
           </div>
 
           <div className="container-input">
@@ -296,9 +296,13 @@ function Pcoordenadas(prop) {
             <input
               type="number"
               className="input-coordenada"
-              {...register("motor3_angle",{required: true, max: 125, min: -125})}
-              />
-              {errors.motor3_angle && <small> Motor3_angle is required</small>}
+              {...register("motor3_angle", {
+                required: true,
+                max: 125,
+                min: -125,
+              })}
+            />
+            {errors.motor3_angle && <small> Motor3_angle is required</small>}
           </div>
 
           <div className="container-input">
@@ -306,18 +310,26 @@ function Pcoordenadas(prop) {
             <input
               type="number"
               className="input-coordenada"
-              {...register("motor4_angle",{required: true, max: 125, min: -125})}
-              />
-              {errors.motor4_angle && <small> Motor4_angle is required</small>}
+              {...register("motor4_angle", {
+                required: true,
+                max: 125,
+                min: -125,
+              })}
+            />
+            {errors.motor4_angle && <small> Motor4_angle is required</small>}
           </div>
           <div className="container-input">
             <label htmlFor="motor5_angle">motor 5 angle: </label>
             <input
               type="number"
               className="input-coordenada"
-              {...register("motor5_angle",{required: true, max: 125, min: -125})}
-              />
-              {errors.motor5_angle && <small> Motor5_angle is required</small>}
+              {...register("motor5_angle", {
+                required: true,
+                max: 125,
+                min: -125,
+              })}
+            />
+            {errors.motor5_angle && <small> Motor5_angle is required</small>}
           </div>
           <div className="botton-form">
             <div className="contenido1">
@@ -387,10 +399,7 @@ function Pcoordenadas(prop) {
           {/* <Buttonsend textbutton="Guadar" onClick={()=>{console.log(i)}} /> */}
 
           <div className="separacion-borrarpunto">
-            <Button
-              text={"Update Punto"}
-              onClick={actualizandoPunto}
-              />
+            <Button text={"Update Punto"} onClick={actualizandoPunto} />
             <Button
               text="Delete Point"
               onClick={async () => {
@@ -461,72 +470,78 @@ function Pcoordenadas(prop) {
                 onChange={(event) => setGri(event.target.checked)}
               />
             </div>
-            {Array.isArray(puntosList) && puntosList.length > 0 ? (
-              puntosList.map((p, index) => (
-                <li className="lista-li" key={index}>
-                  <div className="separacion-play">
-                    <AiOutlinePlayCircle
-                      className="play-punto"
-                      onClick={async () => {
-                        /* Esta accion dara play a solo un punto */
-                        const enviarPunto = {
-                          command: "play",
-                          type: "point",
-                          name: p.name,
-                        };
+            <ReactSortable
+              list={puntosList}
+              setList={setPuntosList}
+              className="flex-center-li"
+            >
+              {Array.isArray(puntosList) && puntosList.length > 0 ? (
+                puntosList.map((p, index) => (
+                  <li className="lista-li" key={index}>
+                    <div className="separacion-play">
+                      <AiOutlinePlayCircle
+                        className="play-punto"
+                        onClick={async () => {
+                          /* Esta accion dara play a solo un punto */
+                          const enviarPunto = {
+                            command: "play",
+                            type: "point",
+                            name: p.name,
+                          };
 
-                        const confirmacionplaypoint1 = window.confirm(
-                          "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
-                        );
-                        if (confirmacionplaypoint1) {
-                          try {
-                            await playpoint(enviarPunto);
-                            toast.success("Robot Moviendose", {
-                              position: "bottom-right",
-                            });
-                          } catch (error) {
-                            toast.error(error.response.data.name, {
+                          const confirmacionplaypoint1 = window.confirm(
+                            "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                          );
+                          if (confirmacionplaypoint1) {
+                            try {
+                              await playpoint(enviarPunto);
+                              toast.success("Robot Moviendose", {
+                                position: "bottom-right",
+                              });
+                            } catch (error) {
+                              toast.error(error.response.data.name, {
+                                position: "bottom-right",
+                              });
+                            }
+                          } else {
+                            toast.error("The move has been canceled", {
                               position: "bottom-right",
                             });
                           }
-                        } else {
-                          toast.error("The move has been canceled", {
-                            position: "bottom-right",
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="pld">
-                    <div className="separacion-name">
-                      <b>{p.name}</b>
+                        }}
+                      />
                     </div>
-                    <div className="separacion-coordenada">
-                      {`[${p.motor1_angle}],
+                    <div className="pld">
+                      <div className="separacion-name">
+                        <b>{p.name}</b>
+                      </div>
+                      <div className="separacion-coordenada">
+                        {`[${p.motor1_angle}],
                   [${p.motor2_angle}],
                   [${p.motor3_angle}],
                   [${p.motor4_angle}],
                   [${p.motor5_angle}]`}
+                      </div>
                     </div>
-                  </div>
-                  <div className="separacion-delete">
-                    <AiOutlineCloseCircle
-                      className="delete-punto"
-                      onClick={() => {
-                        deleteThismovement(index);
-                      }}
-                    />
-                  </div>
-                </li>
-              ))
-            ) : (
-              <li /* className="img-none"  */>
-                Empty list.
-                {/* <div className="no-data-img" >
+                    <div className="separacion-delete">
+                      <AiOutlineCloseCircle
+                        className="delete-punto"
+                        onClick={() => {
+                          deleteThismovement(index);
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li /* className="img-none"  */>
+                  Empty list.
+                  {/* <div className="no-data-img" >
                   <img src={require("../images/folder(1).png")} alt="lista-vacia" title="Crea una lista" width={"100px"} />
                 </div> */}
-              </li>
-            )}
+                </li>
+              )}
+            </ReactSortable>
           </ul>
           <div className="footer-card">
             <Button text="Save Movement" onClick={savePoints} />
@@ -590,7 +605,7 @@ function Pcoordenadas(prop) {
                         const nuevospointsOptions = pointsOptions.filter(
                           (punto) => punto.name !== currentPunto.name
                         );
-                        setpointsOptions(nuevospointsOptions); 
+                        setpointsOptions(nuevospointsOptions);
                         //console.log(nuevospointsOptions);
                         setCurrentPunto(null);
                       } catch (error) {
@@ -617,9 +632,8 @@ function Pcoordenadas(prop) {
         <div className="container-scroll">
           <ul className="container-li">
             <div className="nombrar">
-              
               <label>Nombrar sequence:</label>
-              
+
               <input
                 type="text"
                 required
@@ -631,75 +645,81 @@ function Pcoordenadas(prop) {
                   setSequenceName(e.target.value);
                 }}
               />
-              
             </div>
-            {Array.isArray(movementsList) && movementsList.length > 0 ? (
-              movementsList.map((p, index) => (
-                <li className="lista-li" key={index}>
-                  <div className="separacion-play">
-                    <AiOutlinePlayCircle
-                      className="play-punto"
-                      onClick={async () => {
-                        const afirmarmovement = window.confirm(
-                          "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
-                        );
-                        const playmov = {
-                          command: "play",
-                          type: "movement",
-                          name: p.name,
-                        };
-                        if (afirmarmovement) {
-                          try {
-                            await playmovement(playmov);
-                            console.log(playmov);
-                            toast.success("Robot Moviendose", {
-                              position: "bottom-right",
-                            });
-                          } catch (error) {
-                            toast.error(error.response.data.name, {
+            <ReactSortable
+              list={movementsList}
+              setList={setMovementsList}
+              className="flex-center-li"
+            >
+              {Array.isArray(movementsList) && movementsList.length > 0 ? (
+                movementsList.map((p, index) => (
+                  <li className="lista-li" key={index}>
+                    <div className="separacion-play">
+                      <AiOutlinePlayCircle
+                        className="play-punto"
+                        onClick={async () => {
+                          const afirmarmovement = window.confirm(
+                            "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                          );
+                          const playmov = {
+                            command: "play",
+                            type: "movement",
+                            name: p.name,
+                          };
+                          if (afirmarmovement) {
+                            try {
+                              await playmovement(playmov);
+                              console.log(playmov);
+                              toast.success("Robot Moviendose", {
+                                position: "bottom-right",
+                              });
+                            } catch (error) {
+                              toast.error(error.response.data.name, {
+                                position: "bottom-right",
+                              });
+                            }
+                          } else {
+                            toast.error("Se cancelo el movimiento del robot", {
                               position: "bottom-right",
                             });
                           }
-                        } else {
-                          toast.error("Se cancelo el movimiento del robot", {
-                            position: "bottom-right",
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="pld">
-                    <div className="separacion-name">
-                      <b>{`${p.name}:`}</b>
+                        }}
+                      />
                     </div>
-                    <div className="separacion-coordenada">
-                      {`[${p.gripper}],
+
+                    <div className="pld">
+                      <div className="separacion-name">
+                        <b>{`${p.name}:`}</b>
+                      </div>
+                      <div className="separacion-coordenada">
+                        {`[${p.gripper}],
                       [${p.point1}],
                       [${p.point2}],
                       [${p.point3}],
                       [${p.point4}],
                       [${p.point5}]`}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="separacion-delete">
-                    <AiOutlineCloseCircle
-                      className="delete-punto"
-                      onClick={() => {
-                        deleteThisSequence(index);
-                      }}
-                    />
-                  </div>
-                </li>
-              ))
-            ) : (
-              <li /*  className="img-none"  */>
-                Empty list.
-                {/* <div className="no-data-img" >
+                    <div className="separacion-delete">
+                      <AiOutlineCloseCircle
+                        className="delete-punto"
+                        onClick={() => {
+                          deleteThisSequence(index);
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li /*  className="img-none"  */>
+                  Empty list.
+                  {/* <div className="no-data-img" >
                   <img src={require("../images/folder(1).png")} alt="lista-vacia" title="Crea una lista" width={"100px"} />
                 </div> */}
-              </li>
-            )}
+                </li>
+              )}
+            </ReactSortable>
           </ul>
 
           <div className="footer-card solo-sequence">
@@ -716,6 +736,7 @@ function Pcoordenadas(prop) {
               defaultValue={""}
               onChange={(e) => {
                 const value = e.target.value;
+                console.log(` valor del punto:  ${value}`);
                 if (value === "") {
                   setCurrentMovement(null);
                 } else {
@@ -826,90 +847,92 @@ function Pcoordenadas(prop) {
       <div className="container-card card-full">
         <h2 className="titulo-card">View Sequences</h2>
         <ul className="container-li conteiner-viewSequences">
-          {Array.isArray(sequenceOptions) && sequenceOptions.length > 0 ? (
-            sequenceOptions.map((item, index) => (
-              <li className="lista-li li-grandes" key={index}>
-                <div className="separacion-play">
-                  <AiOutlinePlayCircle
-                    className="play-punto"
-                    onClick={async () => {
-                      const afirmarsequence = window.confirm(
-                        "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
-                      );
-                      const playseq = {
-                        command: "play",
-                        type: "sequence",
-                        name: item.name,
-                      };
-                      if (afirmarsequence) {
-                        try {
-                          await playsequence(playseq);
-                          toast.success("Robot Moviendose", {
-                            position: "bottom-right",
-                          });
-                        } catch (error) {
-                          toast.error(error.response.data.name, {
-                            position: "bottom-right",
-                          });
+          <ReactSortable list={sequenceOptions} setList={setSequenceOptions} className="flex-center-li">
+            {Array.isArray(sequenceOptions) && sequenceOptions.length > 0 ? (
+              sequenceOptions.map((item, index) => (
+                <li className="lista-li li-grandes" key={index}>
+                  <div className="separacion-play">
+                    <AiOutlinePlayCircle
+                      className="play-punto"
+                      onClick={async () => {
+                        const afirmarsequence = window.confirm(
+                          "Advertencia: Estás a punto de mover el robot. Por favor, asegúrate de que estás seleccionando la acción correcta y que el entorno es seguro. ¿Estás seguro de que deseas proceder con el movimiento del robot?"
+                        );
+                        const playseq = {
+                          command: "play",
+                          type: "sequence",
+                          name: item.name,
+                        };
+                        if (afirmarsequence) {
+                          try {
+                            await playsequence(playseq);
+                            toast.success("Robot Moviendose", {
+                              position: "bottom-right",
+                            });
+                          } catch (error) {
+                            toast.error(error.response.data.name, {
+                              position: "bottom-right",
+                            });
+                          }
                         }
-                      }
-                    }}
-                  />
-                </div>
-                <div className="pld">
-                  <div className="separacion-name">
-                    <b>{`${item.name}`}</b>
+                      }}
+                    />
                   </div>
-                  <div className="separacion-coordenada">
-                    {`[${item.movement1}],
+                  <div className="pld">
+                    <div className="separacion-name">
+                      <b>{`${item.name}`}</b>
+                    </div>
+                    <div className="separacion-coordenada">
+                      {`[${item.movement1}],
                   [${item.movement2}],
                   [${item.movement3}],
                   [${item.movement4}],
                   [${item.movement5}]`}
+                    </div>
                   </div>
-                </div>
 
-                <div className="separacion-delete">
-                  <AiOutlineCloseCircle
-                    className="delete-punto"
-                    onClick={async () => {
-                      const confirmdelete = window.confirm(
-                        "Advertencia: Estás a punto de borrar permanentemente una secuencia. Esta acción no se puede deshacer. Por favor, asegúrate de que estás seleccionando la secuencia correcta para eliminar. ¿Estás seguro de que deseas proceder con la eliminación?"
-                      );
-                      if (confirmdelete === true) {
-                        try {
-                          await deletesequence(item.name);
-                          toast.success("Sequence was deleted", {
-                            position: "bottom-right",
-                          });
-                          const nuevosequence = sequenceOptions.filter(
-                            (punto) => punto !== item
-                          );
-                          setSequenceOptions(nuevosequence);
-                        } catch (error) {
-                          toast.error(error.response.data.name, {
-                            position: "bottom-right",
-                          });
+                  <div className="separacion-delete">
+                    <AiOutlineCloseCircle
+                      className="delete-punto"
+                      onClick={async () => {
+                        const confirmdelete = window.confirm(
+                          "Advertencia: Estás a punto de borrar permanentemente una secuencia. Esta acción no se puede deshacer. Por favor, asegúrate de que estás seleccionando la secuencia correcta para eliminar. ¿Estás seguro de que deseas proceder con la eliminación?"
+                        );
+                        if (confirmdelete === true) {
+                          try {
+                            await deletesequence(item.name);
+                            toast.success("Sequence was deleted", {
+                              position: "bottom-right",
+                            });
+                            const nuevosequence = sequenceOptions.filter(
+                              (punto) => punto !== item
+                            );
+                            setSequenceOptions(nuevosequence);
+                          } catch (error) {
+                            toast.error(error.response.data.name, {
+                              position: "bottom-right",
+                            });
+                          }
                         }
-                      }
-                    }}
+                      }}
+                    />
+                  </div>
+                </li>
+              ))
+            ) : (
+              <li className="img-none">
+                No sequences found.
+                <div className="no-data-img">
+                  <img
+                    src={require(`../images/no-data.png`)}
+                    title="No se encontraron secuencias en la base de datos"
+                    alt="no-data"
+                    width={"100px"}
                   />
                 </div>
               </li>
-            ))
-          ) : (
-            <li className="img-none">
-              No sequences found.
-              <div className="no-data-img">
-                <img
-                  src={require(`../images/no-data.png`)}
-                  title="No se encontraron secuencias en la base de datos"
-                  alt="no-data"
-                  width={"100px"}
-                />
-              </div>
-            </li>
-          )}
+            )}
+          </ReactSortable>
         </ul>
       </div>
     </>
